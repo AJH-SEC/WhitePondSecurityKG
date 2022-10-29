@@ -1,0 +1,432 @@
+{% extends 'base.html' %}
+
+{% block header_js %}
+    <title>attack-log_query</title>
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
+{% endblock %}
+
+{% block navname %}log{% endblock %}
+{% block navSon %}log_query{% endblock %}
+
+{% block content %}
+     <div class="content-wrapper" style="margin-left: 0px;">
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+{#                  <div class="card-header">#}
+{#                  </div>#}
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                      <div class="form-group" style="margin-top: 30px; margin-bottom: 30px; margin-left: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:20px;text-align: right;">日志数据</b></label>
+                      </div>
+                        <form id="tacticsForm" class="form-horizontal col-sm-12" method="post" onsubmit="" style="">
+                            {% csrf_token %}
+                            <div class="box-body" style="text-align: center">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group row" style="text-align: center; font-size:15px;">
+                                            <label class="col-sm-1 col-form-label">日志编号</label>
+                                            <div class="col-sm-3" style="text-align: center">
+                                              <input type="text" class="form-control" id="name" name="name" placeholder="请输入编号">
+                                            </div>
+{#                                            <label class="col-sm-1 col-form-label">日志名称</label>#}
+{#                                            <div class="col-sm-3" style="text-align: center">#}
+{#                                              <input type="text" class="form-control" id="log_name" name="log_name" placeholder="请输入名称">#}
+{#                                            </div>#}
+                                            <label class="col-sm-1 col-form-label">日志类型</label>
+                                            <div class="col-sm-3" style="text-align: center">
+                                                <select class="form-control select2" id="type" name="type" data-placeholder='选择类型' style="width: 100%;">
+                                                    <option value="" selected disabled>选择类型</option>
+                                                    {% for t in type %}
+                                                        <option value="{{ t }}">{{ t }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <label class="col-sm-1 col-form-label">处置状态</label>
+                                            <div class="col-sm-3" style="text-align: center">
+                                                <select class="form-control select2" name="operation" id="operation" data-placeholder='选择类型' style="width: 100%;">
+                                                    <option value="" selected disabled>选择状态</option>
+                                                    <option value="handle">处置</option>
+                                                    <option value="ignore">忽略</option>
+                                                    <option value="unhandled">未处置</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" style="text-align: center; font-size:15px;">
+                                            <label class="col-sm-1 col-form-label">事件类型</label>
+                                            <div class="col-sm-3" style="text-align: center">
+                                              <select class="form-control select2" name="event__type" id="event__type" data-placeholder='选择类型' style="width: 100%;">
+                                                    <option value="" selected disabled>选择方式</option>
+                                                    {% for e in event__type %}
+                                                        <option value="{{ e }}">{{ e }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <label class="col-sm-1 col-form-label">创建时间</label>
+                                            <div class="col-sm-3" style="text-align: center">
+                                                  <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                      <span class="input-group-text"><i class="far fa-clock"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control float-right" id="reservationtime">
+                                                  </div>
+                                            </div>
+{#                                            <label class="col-sm-1 col-form-label">状态</label>#}
+{#                                            <div class="col-sm-3" style="text-align: center">#}
+{#                                                <select class="form-control select2" name="log_state" id="log_state" data-placeholder='选择类型' style="width: 100%;">#}
+{#                                                    <option value="" selected disabled>选择状态</option>#}
+{#                                                    {% for d in data %}#}
+{#                                                        <option value="{{ d.id }}">{{ d.name }}</option>#}
+{#                                                    {% endfor %}#}
+{#                                                </select>#}
+{#                                            </div>#}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" id="submit" class="btn btn-primary btn-block">
+                                            <i class="fas fa-search"></i>
+                                            <span>查询</span>
+                                            <div class="custom-control custom-switch" hidden="hidden">
+                                              <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                                              <label class="custom-control-label" for="customSwitch1"></label>
+                                            </div>
+                                        </button>
+                                        <button class="btn btn-default btn-block" id="reset" data-dismiss="modal" style="margin-top: 16px">
+                                            <i class="fas fa-undo"></i>
+                                            <span>重置</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                      <div style="margin: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:15px;text-align: right;">导出数据请在下方选择导出选项:</b></label>
+                      </div>
+                    <table id="example" class="table table-bordered table-striped display">
+                        <thead>
+                            <tr>
+                                <th>日志编号</th>
+                                <th>日志名称</th>
+                                <th>日志类型</th>
+                                <th>事件类型</th>
+                                <th>处置状态</th>
+                                <th>创建时间</th>
+                                <th>修改时间</th>
+                                <th>查看</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+
+{% endblock %}
+
+{% block footer_js %}
+<!-- jQuery -->
+<script src="/static/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/plugins/jszip/jszip.min.js"></script>
+<script src="/static/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/static/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/static/plugins/jszip/jszip.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
+
+<!-- AdminLTE App -->
+{#<script src="/static/dist/js/adminlte.min.js"></script>#}
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/bootstrap-growl.js"></script>
+<script>
+    $('#reservationtime').daterangepicker({
+      timePicker: true,
+      timePickerIncrement: 30,
+      locale: {
+        format: 'MM/DD/YYYY hh:mm A'
+      }
+    })
+    //搜索条件时间初始为空
+    document.getElementById("reservationtime").value='';
+</script>
+//datatables
+<script>
+    function format(d) {
+        //详情
+        var tr_td = ''
+        var row =0
+        for (i in d) {
+            if (row < 30){
+                tr_td += '<tr>' +
+                '<td>' + i + ':</td>' +
+                '<td>' +
+                d[i] +
+                '</td>' +
+                '</tr>'
+            }
+            row = row + 1
+        }
+        table_html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' + tr_td + '</table>'
+        return (
+            table_html
+        );
+    }
+  $(document).ready(function () {
+    var table = $("#example").DataTable({
+        "searching": false,//搜索框
+        "responsive": true,
+        "lengthChange": false,
+        "ordering": false,
+        "autoWidth": true,
+        "dom": 'Bfrtip',
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "pageLength": 15,//每页显示数据
+        "bProcessing": true, //显示数据加载中\
+        "sAjaxSource": '/logquery/query/data/',
+        serverSide: true, //开启服务端模式
+        "fnServerData": function(sSource, aoData, fnCallback){
+            // 点击过搜索后每次datatables数据变动都会读取过滤参数
+            var customSwitch1 = document.getElementById("customSwitch1").checked
+            if (customSwitch1){
+                {#var log_number = document.getElementById("log_number").value#}
+                var name = document.getElementById("name").value
+                var type = document.getElementById("type").value
+                var event__type = document.getElementById("event__type").value
+                var reservationtime = document.getElementById("reservationtime").value
+                var operation = document.getElementById("operation").value
+                var search = {}
+                {#if (log_number) {#}
+                {#    search['log_number'] = log_number#}
+                {# }#}
+                if (name){
+                    search['name'] = name
+                }
+                if (type){
+                    search['type'] = type
+                }
+                if (event__type){
+                    search['event__type'] = event__type
+                }
+                if (reservationtime){
+                    search['reservationtime'] = reservationtime
+                }
+                if (operation){
+                    search['operation'] = operation
+                }
+                aoData.push({'name': 'search', 'state': customSwitch1, 'value': search})
+            }
+            $.ajax( {
+                'type' : 'get',
+                "url": sSource,
+                "dataType": "json",
+                "data": { "aodata" : JSON.stringify(aoData) },
+                "success": function(resp) {
+                    fnCallback(resp);
+                }
+            });
+         },
+        {#ajax: '/logquery/query/data/',#}
+        columns: [
+            { data: 'name' },
+            { data: 'name' },
+            { data: 'type' ,
+                "defaultContent": ""
+            },
+            { data: 'event__type' ,
+                "defaultContent": ""
+            },
+            {#{ data: 'operation',#}
+            {#    "defaultContent": "未处置"#}
+            {# },#}
+            {data: "operation",
+                "defaultContent": "未处置",
+                "fnCreatedCell":function(nTd, sData, oData, iRow, iCol){
+                    var element = $(nTd).empty();
+                     if (sData == 'handle') {
+                         element.append("处置")
+                     }
+                     else if (sData == 'ignore') {
+                         element.append("忽略")
+                     }
+                     else{
+                         element.append('未处置')
+                     }
+             }
+            },
+            { data: 'event__start' ,
+                "defaultContent": ""
+            },
+            { data: 'last modified' ,
+                "defaultContent": ""
+            },
+            {
+                "className": 'dt-control',
+                "orderable": false,
+                "data": null,
+                "defaultContent": '<a class="btn btn-info btn-sm" href="#"> <i class="fas"> </i>查看 </a>',
+            },
+            {"data": null, "sClass": "center",
+                        "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            var element = $(nTd).empty();
+                            var manage = $('<a href="javascript:;">处置&nbsp&nbsp&nbsp&nbsp</a>');
+                            var ignore = $('<a href="javascript:;">忽略</a>');
+
+                            element.append(manage);
+                            element.append(ignore);
+
+                            manage.on('click', function () {
+                                var con = confirm("是否确定处置？");
+                                if (con) {
+                                    var params = {'operation': 'handle', 'name': oData["name"]}
+                                    $.get("/logquery/query/operation/", params, function (data) {
+                                        if (data.success) {
+                                            $.growlService("处置操作成功！", {type: "success"});
+                                            table.ajax.reload();
+                                        } else {
+                                            $.growlService("处置操作失败！", {type: "danger"})
+                                        }
+                                    })
+                                }
+                            });
+
+                            ignore.on('click', function () {
+                                var con = confirm("是否确定忽略？");
+                                if (con) {
+                                    var params = {'operation': 'ignore', 'name': oData["name"]}
+                                    $.get("/logquery/query/operation/", params, function (data) {
+                                        if (data.success) {
+                                            $.growlService("忽略操作成功", {type: "success"});
+                                            table.ajax.reload();
+                                        } else {
+                                            $.growlService("忽略操作失败", {type: "danger"})
+                                        }
+                                    })
+                                }
+                            });
+                        }
+                    }
+        ],
+    });
+    // Add event listener for opening and closing details
+    $('#example tbody').on('click', 'td.dt-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+    //查找 开启服务端模式后此处只提供重载功能
+    $("#submit").on('click', function () {
+        document.all.customSwitch1.checked=true
+        {#var log_number = document.getElementById("log_number").value#}
+        {#var log_name = document.getElementById("log_name").value#}
+        {#var log_type = document.getElementById("log_type").value#}
+        {#var filter_by = document.getElementById("filter_by").value#}
+        {#var reservationtime = document.getElementById("reservationtime").value#}
+        {#var log_state = document.getElementById("log_state").value#}
+        {#var prams = ''#}
+        {#if (log_number) {#}
+        {#    var log_number_str = 'log_number=' + log_number + '&'#}
+        {#    prams += log_number_str#}
+        {# }#}
+        {#if (log_name){#}
+        {#    var log_name_str = 'log_name=' + log_name + '&'#}
+        {#    prams += log_name_str#}
+        {# }#}
+        {#if (log_type){#}
+        {#    var log_type_str = 'log_type=' + log_type + '&'#}
+        {#    prams += log_type_str#}
+        {# }#}
+        {#if (filter_by){#}
+        {#    var filter_by_str = 'filter_by=' + filter_by + '&'#}
+        {#    prams += filter_by_str#}
+        {# }#}
+        {#if (reservationtime){#}
+        {#    var reservationtime_str = 'reservationtime=' + reservationtime + '&'#}
+        {#    prams += reservationtime_str#}
+        {# }#}
+        {#if (log_state){#}
+        {#    var log_state_str = 'log_state=' + log_state#}
+        {#    prams += log_state_str#}
+        {# }#}
+        {#table.ajax.url("/logquery/query/data/search/?" + prams).load();#}
+        table.ajax.reload();
+
+    });
+    //重置按钮
+    $("#reset").on('click', function () {
+        document.all.customSwitch1.checked=false
+        {#document.getElementById("log_number").value='';#}
+        document.getElementById("name").value='';
+        document.getElementById("type").value='';
+        document.getElementById("event__type").value='';
+        document.getElementById("reservationtime").value='';
+        document.getElementById("operation").value='';
+    });
+
+    //防止重载
+    $("#tacticsForm").ajaxForm({
+    {#    type: "post",#}
+    {#    url: "",#}
+        {#success: function (data) {#}
+        {#    if (data.success) {#}
+        {#        table.ajax.url().load();#}
+        {#        table.dataTable({#}
+        {#            ajax: {#}
+        {#                url: "/logquery/query/data/search/",#}
+        {#                type: 'POST',#}
+        {#                data: "tableParams",#}
+        {#            },#}
+        {#        }).ajax.reload();#}
+        {#        $.growlService("搜索", {type: "success"});#}
+        {#    } else {#}
+        {#        $.growlService(data["error_message"], {type: "danger"});#}
+        {#    }#}
+        {# }#}
+      });
+  });
+</script>
+{% endblock %}

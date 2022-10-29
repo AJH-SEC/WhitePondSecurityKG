@@ -1,0 +1,68 @@
+name: packet_flow
+
+data: 
+  if_node: # 判断衍生节点信息
+    - filed: source
+      value: [ip, port]
+      labels: [NET_ASSERT]
+    - filed: destination
+      value: [ip, port]
+      labels: [NET_ASSERT]
+
+
+  if_node_attribute: # 新建节点属性
+    - filed: source
+      son_filed: __all
+    - filed: destination
+      son_filed: __all
+    - filed: agent
+      son_filed: __all
+    - filed: network
+      son_filed: __all
+    - filed: event
+      son_filed: __all
+    - filed: flow
+      son_filed: __all
+    - filed: host
+      son_filed: __all
+    - filed: type
+      son_filed: __all
+  
+  # 日志节点的label
+  if_node_labels: [FLOW_NODE]
+
+  if_node_relationship: # 建立节点关系
+    filed_match: # 字段匹配，对匹配上的字段建立关系
+      - filed: source
+        dircertion: left
+        attr: [ip, port]
+        is_num: true # 是否将属性数量也作为关系关联标识
+        source_node_labels: [NET_ASSERT]
+        dest_node_labels: [FLOW_NODE]
+        rs_label: FLOW_RELATE_LABEL
+        
+      - filed: destination
+        dircertion: right
+        attr: [ip, port]
+        is_num: true
+        source_node_labels: [FLOW_NODE]
+        dest_node_labels: [NET_ASSERT]
+        rs_label: FLOW_RELATE_LABEL
+        
+      # - filed: flow
+      #   dircertion: right
+      #   attr: [id]
+      #   is_num: false
+      #   source_node_labels: [FLOW_NODE]
+      #   dest_node_labels: [FLOW_NODE]
+      #   rs_label: FLOW_ID_RELATE_LABEL
+        
+
+    time_compare: # 时间匹配
+      - filed: event
+        forward: start
+        backward: end
+        dircertion: right
+
+    
+

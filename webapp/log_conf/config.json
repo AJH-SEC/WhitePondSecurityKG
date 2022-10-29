@@ -1,0 +1,145 @@
+{
+    "neo4j_profile": {
+        "host_url": "neo4j://localhost:7687",
+        "username": "neo4j",
+        "password": "123456"
+    },
+    
+    "net": {
+        "recv_type": "kafka",
+        "kafka": [
+            {
+                "host": "192.168.1.104",
+                "port": "9092",
+                "topic": "packetbeat_log_test",
+                "username": "admin",
+                "password": "admin"
+            }
+        ],
+        "is_enable": false,
+        "templates": "D:\\ajh\\attack\\attack\\webapp\\log_conf\\templates\\packetbeat"
+    },
+    "network_security_equipment": {
+        "fw": {
+            "recv_type": "kafka",
+            "kafka": [
+                {
+                    "host": "192.168.1.104",
+                    "port": "9092",
+                    "topic": "fw__huawei_log"
+                }
+            ],
+            "is_enable": true
+        },
+        "ips": {
+            "recv_type": "kafka",
+            "kafka": [
+                {
+                    "host": "192.168.1.104",
+                    "port": "9092",
+                    "topic": "ips_sangfor_log"
+                }
+            ],
+            "is_enable": true
+        },
+        "waf": {
+            "recv_type": "kafka",
+            "kafka": [
+                {
+                    "host": "192.168.1.104",
+                    "port": "9092",
+                    "topic": "waf_ray_stc_waf_log"
+                }
+            ],
+            "is_enable": true
+        },
+        "apt_web": {
+            "recv_type": "kafka",
+            "kafka": [
+                {
+                    "host": "192.168.1.104",
+                    "port": "9092",
+                    "topic": "trace_web_zhongrui_log"
+                }
+            ],
+            "is_enable": true
+        },
+        "apt_net": {
+            "recv_type": "kafka",
+            "kafka": [
+                {
+                    "host": "192.168.1.104",
+                    "port": "9092",
+                    "topic": "trace_net_zhongrui_log"
+                }
+            ],
+            "is_enable": true
+        },
+        "apt_mail": {
+            "recv_type": "kafka",
+            "kafka": [
+                {
+                    "host": "192.168.1.104",
+                    "port": "9092",
+                    "topic": "trace_mail_zhongrui_log"
+                }
+            ],
+            "is_enable": true
+        },
+        "honey": {
+            "recv_type": "kafka",
+            "kafka": [
+                {
+                    "host": "192.168.1.104",
+                    "port": "9092",
+                    "topic": "honey_log"
+                }
+            ],
+            "is_enable": true
+        },
+        "other": {
+            "recv_type": "kafka",
+            "kafka": []
+        }
+    },
+    "wazuh_alert": {
+        "recv_type": "kafka",
+        "kafka": [
+            {
+                "host": "192.168.1.104",
+                "port": "9092",
+                "topic": "wazuh_alert_log"
+            }
+        ],
+        "is_enable": true
+    },
+    "nomal_log": {
+        "recv_type": "kafka",
+        "kafka": [
+            {
+                "name": "auditbeat",
+                "host": "192.168.1.104",
+                "port": "9092",
+                "topic": "auditbeat_log"
+            },
+            {
+                "name": "filebeat",
+                "host": "192.168.1.104",
+                "port": "9092",
+                "topic": "filebeat_log"
+            },
+            {
+                "name": "packetbeat",
+                "host": "192.168.1.104",
+                "port": "9092",
+                "topic": "packetbeat_log"
+            }
+        ],
+        "rule_dir": "D:\\ajh\\attack\\attack\\webapp\\log_conf\\rules",
+        "is_enable": false
+    },
+    "api": {
+        "packetbeat_url": ""
+    },
+    "log_level": 10
+}

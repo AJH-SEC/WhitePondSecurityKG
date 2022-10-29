@@ -1,0 +1,2 @@
+log byte,log value,attack model,techniques id,techniques name
+attack_type,PROBE,探查,T1595,Active Scanning

@@ -1,0 +1,451 @@
+{% extends 'base.html' %}
+
+{% block header_js %}
+    <title>home-home</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <style>
+    .g6-tooltip {
+      border: 1px solid #e2e2e2;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #545454;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 8px;
+      box-shadow: rgb(174, 174, 174) 0px 0px 10px;
+    }
+    </style>
+{% endblock %}
+
+{% block navname %}home{% endblock %}
+{% block navSon %}home{% endblock %}
+
+{% block content %}
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">ATT&CK图谱态势展示</h3>
+              </div>
+                <div id="mountNode"></div>
+            </div>
+            <div id="main" style="width: 100%;height:400px;"></div>
+          </div>
+          <!-- /.col -->
+          <div class="col-md-4">
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">ATT&CK统计信息（v12.0）</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped" style="margin-bottom: 5px; line-height:1.17">
+                  <thead>
+                    <tr>
+                      <th>序号</th>
+                      <th>名称</th>
+                      <th>数量</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>战术</td>
+                      <td>
+                        {{ Tactics }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>技术</td>
+                      <td>
+                        {{ Techniques }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>子技术</td>
+                      <td>
+                        {{ SubTechniques }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td>缓解措施</td>
+                      <td>
+                        {{ Mitigations }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>组织</td>
+                      <td>
+                        {{ Groups }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td>软件</td>
+                      <td>
+                        {{ Software }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>7</td>
+                      <td>数据资源</td>
+                      <td>
+                        {{ Datasource }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td>数据组件</td>
+                      <td>
+                        {{ DatasourceComponent }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>9</td>
+                      <td>战役</td>
+                      <td>
+                        {{ Campaign }}
+                      </td>
+                    </tr>
+{#                    <tr style="height: 1px">#}
+{#                      <td> </td>#}
+{#                      <td> </td>#}
+{#                      <td> </td>#}
+{#                    </tr>#}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <div id="main1" style="width: 100%;height:400px;"></div>
+
+          </div>
+          <!-- /.col -->
+        </div>
+      </div>
+    </section>
+{% endblock %}
+
+{% block footer_js %}
+<script src="/static/js/home/echarts.min.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g6-4.2.3/dist/g6.min.js"></script>
+{#  <script src="/static/js/home/g6.min.js"></script>#}
+
+{#  ATT&CK图谱#}
+    <script>
+        // 实例化 Minimap 插件
+        const minimap = new G6.Minimap({
+          size: [ 100, 100 ],
+          className: "minimap",
+          type: 'delegate'
+        });
+
+        // 实例化 Grid 插件
+        const grid = new G6.Grid();
+
+        const graph = new G6.Graph({
+          container: 'mountNode',
+          width: 1080,
+          height: 400,
+            fitView: true,
+            fitViewPadding: 20,
+          defaultNode: {
+            labelCfg: {
+              style: {
+                fill: '#524e4f',
+                  fontSize: 4,
+              }
+            }
+          },
+          defaultEdge: {
+              color: '#db1414',
+              size: 0.5,
+              style: {
+                  endArrow: {
+                    path: G6.Arrow.triangle(5, 10, 3), // 使用内置箭头路径函数，参数为箭头的 宽度、长度、偏移量（默认为 0，与 d 对应）
+                    d: 3,
+                      fill: "#a5a2a3",
+                  }
+                },
+            labelCfg: {
+              autoRotate: true,
+                refY: -3,
+                style:{
+                  fill: '#a5a2a3',
+                    fontSize: 4,
+                    lineWidth: 0.5
+                },
+            }
+          },
+          nodeStateStyles: {
+            hover: {
+              fill: 'lightsteelblue'
+            },
+            click: {
+              stroke: '#0e0d0d',
+              lineWidth: 3
+            }
+          },
+          edgeStateStyles: {
+            click: {
+              stroke: 'steelblue'
+            }
+          },
+          layout: {
+            type: 'force',
+            linkDistance: 100,
+            preventOverlap: true,
+            nodeStrength: -30,
+            edgeStrength: 0.01
+          },
+          modes: {
+            default: [ 'drag-node', 'drag-canvas', 'zoom-canvas',
+                      // 点提示框交互工具的配置
+                      {
+                        type: 'tooltip',
+                        formatText(model) {
+                          const text = 'id: ' + model.id
+                          + '<br/> name: ' + model.name;
+                          return text;
+                        },
+                        shouldUpdate: e => {
+                          return true;
+                        }
+                      },
+                      // 边提示框交互工具的配置
+                      {
+                        type: 'edge-tooltip',
+                        formatText(model) {
+                          const text = 'start_node: ' + model.source
+                          + '<br/> type: ' + model.label
+                          + '<br/> end_node: ' + model.target;
+                          return text;
+                        },
+                        shouldUpdate: e => {
+                          return true;
+                        }
+                      }
+                     ]
+          },
+          {#plugins: [ minimap, grid ],    // 将 Minimap 和 Grid 插件的实例配置到图上#}
+          fitCenter: true,
+        });
+        $.get("/home/data/", data => {
+            const main = async () => {
+                 if (data.success) {
+                    var nodes = data.data.nodes;
+                    var edges = data.data.edges;
+                    nodes.forEach(node => {
+                        var r = Math.round(Math.random()*255)
+                        var g = Math.round(Math.random()*255)
+                        var b = Math.round(Math.random()*255)
+                        node.label = fittingString(node.label, 60, globalFontSize);
+                        if (!node.style) {
+                            node.style = {};
+                        }
+                        node.style.lineWidth = 1;
+                        node.style.stroke = 'red';
+                        node.style.fill = 'rgb('+ r + ',' + g +','+ b +' )';
+                        switch (node.class) {
+                            case 'c0': {
+                                node.type = 'circle';
+                                node.size = 30;
+                                break;
+                            }
+                            case 'c1': {
+                                node.type = 'rect';
+                                node.size = [35, 20];
+                                break;
+                            }
+                            case 'c2': {
+                                node.type = 'ellipse';
+                                node.size = [35, 20];
+                                break;
+                            }
+                        }
+                    });
+                    edges.forEach(edge => {
+                        var source = edge.source;
+                        var target = edge.target;
+                        if (!edge.style) {
+                            edge.style = {};
+                        }
+                        if (source == target) {
+                            edge.type = 'loop';
+                            edge.loopCfg = {
+                              position: 'top',
+                            };
+                        }
+                        edge.style.lineWidth = edge.weight;
+                        edge.style.opacity = 0.6;
+                        edge.style.stroke = 'grey';
+                    });
+
+
+                    graph.data(data.data);
+                    graph.render();
+
+                    graph.on('node:mouseenter', e => {
+                        const nodeItem = e.item;
+                        graph.setItemState(nodeItem, 'hover', true);
+                    });
+                    graph.on('node:mouseleave', e => {
+                        const nodeItem = e.item;
+                        graph.setItemState(nodeItem, 'hover', false);
+                    });
+                    graph.on('node:click', e => {
+                        const clickNodes = graph.findAllByState('node', 'click');
+                        clickNodes.forEach(cn => {
+                            graph.setItemState(cn, 'click', false);
+                        });
+                        const nodeItem = e.item;
+                        graph.setItemState(nodeItem, 'click', true);
+                    });
+                    graph.on('edge:click', e => {
+                        const clickEdges = graph.findAllByState('edge', 'click');
+                        clickEdges.forEach(ce => {
+                            graph.setItemState(ce, 'click', false);
+                        });
+                        const edgeItem = e.item;
+                        graph.setItemState(edgeItem, 'click', true);
+                    });
+                }
+            };
+        main();
+        });
+const fittingString = (str, maxWidth, fontSize) => {
+  const ellipsis = '...';
+  const ellipsisLength = G6.Util.getTextSize(ellipsis, fontSize)[0];
+  let currentWidth = 0;
+  let res = str;
+  const pattern = new RegExp('[\u4E00-\u9FA5]+'); // distinguish the Chinese charactors and letters
+  str.split('').forEach((letter, i) => {
+    if (currentWidth > maxWidth - ellipsisLength) return;
+    if (pattern.test(letter)) {
+      // Chinese charactors
+      currentWidth += fontSize;
+    } else {
+      // get the width of single letter according to the fontSize
+      currentWidth += G6.Util.getLetterWidth(letter, fontSize);
+    }
+    if (currentWidth > maxWidth - ellipsisLength) {
+      res = `${str.substr(0, i)}${ellipsis}`;
+    }
+  });
+  return res;
+};
+
+const globalFontSize = 12;
+    </script>
+{#    日志与命中数量统计图#}
+    <script>
+    var chartDom = document.getElementById('main');
+    var myChart = echarts.init(chartDom);
+    var option;
+        $.get('/home/data/line/').done(function(data) {
+        console.log(data)
+
+            option = {
+                title: {
+                    text: '日志与命中数量统计图'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['日志数量', '命中数量']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        {#saveAsImage: {}#}
+                    }
+                },
+                xAxis: {
+                    type: 'time',
+                    name: '日期',
+                },
+                yAxis: {
+                    name: '数量',
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '日志数量',
+                        type: 'line',
+                        data: data.data.logs_num
+                    },
+                    {
+                        name: '命中数量',
+                        type: 'line',
+                        data: data.data.hits_num
+                    }
+                ]
+            };
+
+            option && myChart.setOption(option);
+        });
+    </script>
+{#    雷达图#}
+    <script>
+    var chartDom = document.getElementById('main1');
+    var myChart1 = echarts.init(chartDom);
+    var option1;
+    $.get('/home/data/radar/').done(function(data) {
+        console.log(data)
+
+        option1 = {
+            title: {
+                text: '命中规则在战术中的分布'
+            },
+            tooltip: {
+                trigger: ''
+            },
+            legend: {
+                data: ['规则命中占比']
+            },
+            radar: {
+                // shape: 'circle',
+                indicator: (function () {
+                    var res = [];
+                    for (i in data.data.tactics) {
+                      res.push({ name: data.data.tactics[i], max: 100 });
+                    }
+                    return res;
+                  })(),
+            },
+            series: [
+                {
+                    name: 'Budget vs spending',
+                    type: 'radar',
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    areaStyle: {},
+                    data: [
+                        {
+                            value: data.data.proportion,
+                            name: '规则命中占比'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        option1 && myChart1.setOption(option1);
+    });
+    </script>
+{% endblock %}

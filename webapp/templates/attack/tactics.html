@@ -1,0 +1,497 @@
+{% extends 'base.html' %}
+
+{% block header_js %}
+    <title>attack-tactics</title>
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
+{% endblock %}
+
+{% block navname %}attack{% endblock %}
+{% block navSon %}tactics{% endblock %}
+
+{% block content %}
+     <div class="content-wrapper" style="margin-left: 0px;">
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+{#                  <div class="card-header">#}
+{#                  </div>#}
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                      <div class="form-group" style="margin-top: 30px; margin-bottom: 30px; margin-left: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:20px;text-align: right;">战术列表</b></label>
+                      </div>
+                      <div class="col-12" style="display: inline-block;">
+                          <button type="submit" class="btn btn-primary col start float-left" data-toggle="modal" data-target="#myModal" style="width:100px;">
+                            <i class="fas fa-plus"></i>
+                            <span>新建</span>
+                          </button>
+{#                          <button type="button" class="btn btn-block btn-outline-secondary float-left " data-toggle="modal" data-target="#myModal1" style="width:130px;">#}
+{#                              批量导入#}
+{#                          </button>#}
+{#                          <a id="download">#}
+{#                              <button type="button" class="btn btn-block btn-outline-secondary float-right" style="width:130px;margin-right: 5px;">#}
+{#                                <i class="fas fa-download"></i> 下载#}
+{#                              </button>#}
+{#                          </a>#}
+                      </div>
+                      <div class="form-group" style="margin: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:15px;text-align: right;">导出数据请在下方选择导出选项:</b></label>
+                      </div>
+                    <table id="example" class="table table-bordered table-striped display">
+                        <thead>
+                            <tr>
+{#                                <th>序号</th>#}
+                                <th>ID</th>
+                                <th>名称</th>
+                                <th>描述信息</th>
+                                <th>信息链接</th>
+                                <th>创建时间</th>
+                                <th>修改时间</th>
+                                <th>版本号</th>
+                                <th>查看</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+{#        新建弹出#}
+        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="box box-primary">
+                            <div class="row" style="width:90%; margin:0 auto; margin-top:40px" >
+                                <form id="attackForm" class="form-horizontal col-sm-12" method="post" onsubmit="">
+                                    {% csrf_token %}
+                                    <div class="box-body" style="text-align: center">
+                                        <div class="form-group row" style="text-align: center">
+                                            <label class="col-sm-2 col-form-label">ID</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="ID" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">名称</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="name" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">描述信息</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="description">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">信息链接</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="url">
+                                            </div>
+                                        </div>
+{#                                        <div class="form-group row" style="text-align: center">#}
+{#                                            <label class="col-sm-2 col-form-label">created</label>#}
+{#                                            <div class="col-sm-10" style="text-align: center">#}
+{#                                              <input type="text" class="form-control" name="created">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="form-group row">#}
+{#                                            <label class="col-sm-2 col-form-label">last modified</label>#}
+{#                                            <div class="col-sm-10">#}
+{#                                              <input type="text" class="form-control" name="last_modified">#}
+{#                                            </div>#}
+{#                                        </div>#}
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">版本号</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="version">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--box body -->
+
+                                    <div class="modal-footer" style="width:100%;">
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                        <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+{#                    </div>#}
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+{#        修改弹出#}
+        <div class="modal fade" id="myModal2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="box box-primary">
+                            <div class="row" style="width:90%; margin:0 auto; margin-top:40px" >
+                                <form id="attackForm2" class="form-horizontal col-sm-12" method="post" onsubmit="">
+                                    {% csrf_token %}
+                                    <div class="box-body" style="text-align: center">
+                                        <div class="form-group row" style="text-align: center">
+                                            <label class="col-sm-2 col-form-label">ID</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="ID" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">名称</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="name" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">描述信息</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="description">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">信息链接</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="url">
+                                            </div>
+                                        </div>
+{#                                        <div class="form-group row" style="text-align: center">#}
+{#                                            <label class="col-sm-2 col-form-label">created</label>#}
+{#                                            <div class="col-sm-10" style="text-align: center">#}
+{#                                              <input type="text" class="form-control" name="created">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="form-group row">#}
+{#                                            <label class="col-sm-2 col-form-label">last modified</label>#}
+{#                                            <div class="col-sm-10">#}
+{#                                              <input type="text" class="form-control" name="last_modified">#}
+{#                                            </div>#}
+{#                                        </div>#}
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">版本号</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="version">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--box body -->
+
+                                    <div class="modal-footer" style="width:100%;">
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                        <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+{#                    </div>#}
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+{#        导入弹出#}
+        <div class="modal fade" id="myModal1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel" style="font-size: 25px">导入数据</h4>
+
+                                <div class="box box-primary">
+                                    <div class="row">
+                                        <form id="uploadForm" class="form-horizontal" enctype="multipart/form-data" method="post">
+                                            {% csrf_token %}
+                                            <div class="box-body">
+                                                <div class="form-group">
+                                                    <label class="col-sm-6 control-label">上传Excel</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="file" class="form-control" style="height: 48px;" name="excel" id="excel" accept=".xlsx" required />
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="form-group">
+                                                    <label class="col-sm-12 control-label"><b style="font-size:10px;text-align: right;margin: 10px">提示:请选择指定格式的文件！</b></label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer" style="width:50%">
+                                                <button type="submit" class="btn btn-primary">提交</button>
+                                                <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal -->
+                </div>
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+
+{% endblock %}
+
+{% block footer_js %}
+<!-- jQuery -->
+<script src="/static/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/plugins/jszip/jszip.min.js"></script>
+<script src="/static/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/static/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/static/plugins/jszip/jszip.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- AdminLTE App -->
+{#<script src="/static/dist/js/adminlte.min.js"></script>#}
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/bootstrap-growl.js"></script>
+<script>
+    $("#attackForm").ajaxForm({
+        type: "post",
+        url: "/attack/tactics/data/create/",    //提交到的url
+        success: function (data) {
+            if (data.success) {
+                $.growlService("创建成功", {type: "success"});
+                setTimeout(() => {
+                  window.location.reload()
+                }, 1000);
+            } else {
+                console.log(data);
+                $.growlService(data["error_message"], {type: "danger"});
+            }
+        }
+    });
+</script>
+//datatables
+<script>
+    function format(d) {
+        //详情
+        return (
+            '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+            {#'<tr>' +#}
+            {#'<td>Full name:</td>' +#}
+            {#'<td>' +#}
+            {#d.name +#}
+            {#'</td>' +#}
+            {#'</tr>' +#}
+            {#'<tr>' +#}
+            {#'<td>Extension number:</td>' +#}
+            {#'<td>' +#}
+            {#d.extn +#}
+            {#'</td>' +#}
+            {#'</tr>' +#}
+            {#'<tr>' +#}
+            {#'<td>Extra info:</td>' +#}
+            {#'<td>And any further details here (images etc)...</td>' +#}
+            {#'</tr>' +#}
+            '</table>'
+        );
+    }
+    var remarkShowLength = 20;//默认现实的字符串长度
+    //切换显示备注信息，显示部分或者全部
+    function changeShowRemarks(obj){//obj是td
+       var content = $(obj).attr("content");
+       if(content != null && content != ''){
+          if($(obj).attr("isDetail") == 'true'){//当前显示的是详细备注，切换到显示部分
+             //$(obj).removeAttr('isDetail');//remove也可以
+             $(obj).attr('isDetail',false);
+             $(obj).html(getPartialRemarksHtml(content));
+          }else{//当前显示的是部分备注信息，切换到显示全部
+             $(obj).attr('isDetail',true);
+             $(obj).html(getTotalRemarksHtml(content));
+          }
+       }
+    }
+    //部分备注信息
+    function getPartialRemarksHtml(remarks){
+          return remarks.substr(0,remarkShowLength) + '&nbsp;&nbsp;<a href="javascript:void(0);" ><b>...</b></a>';
+    }
+
+    //全部备注信息
+    function getTotalRemarksHtml(remarks){
+          return remarks + '&nbsp;&nbsp;<a href="javascript:void(0);" >收起</a>';
+    }
+  $(document).ready(function () {
+    var table = $("#example").DataTable({
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false,
+        "info": true,
+        "dom": 'Bfrtip',
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "pageLength": 15,//每页显示数据
+        "bProcessing": true, //显示数据加载中\
+        "createdRow": function( row, data, dataIndex ) {
+           if(data.description.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(2).attr('ondblclick','javascript:changeShowRemarks(this);');
+           }
+           if(data.url.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(3).attr('ondblclick','javascript:changeShowRemarks(this);');
+           }
+           $(row).children('td').eq(2).attr('content',data.description);
+           $(row).children('td').eq(3).attr('content',data.url);
+         },
+        ajax: '/attack/tactics/data/',
+        columns: [
+            { data: 'ID' },
+            { data: 'name' },
+            { data: 'description' ,
+                "render": function (data, type, full, meta) {
+                    if (full.description.length > remarkShowLength) {
+                     return getPartialRemarksHtml(full.description);//显示部分信息
+                    } else {
+                        return full.description;//显示原始全部信息
+                        }
+                    }
+            },
+            { data: 'url',
+            "render": function (data, type, full, meta) {
+                    if (full.url.length > remarkShowLength) {
+                     return getPartialRemarksHtml(full.url);//显示部分信息
+                    } else {
+                        return full.url;//显示原始全部信息
+                        }
+                    }
+            },
+            { data: 'created' },
+            { data: 'last modified'},
+            { data: 'version' },
+            {
+                "className": 'dt-control',
+                "orderable": false,
+                "data": null,
+                "defaultContent": '<a class="btn btn-info btn-sm" href="#"> <i class="fas"> </i>查看 </a>',
+            },
+            {"data": null, "sClass": "center",
+                        "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            var element = $(nTd).empty();
+                            var edit = $('<a href="javascript:;" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal2" style="margin-right: 10px"> <i class="fas fa-pencil-alt"> </i>修改 </a>');
+                            var remove = $('<a href="javascript:;" class="btn btn-danger btn-sm remove111"> <i class="fas fa-trash"> </i>删除 </a>');
+
+                            element.append(edit);
+                            element.append(remove);
+                            remove.on('click', function () {
+                                var $tr = $(this).parents('tr');
+                                var con = confirm("确定删除？");
+                                if (con) {
+                                    console.log(oData["id"])
+                                    $.get("/attack/tactics/delete/" + oData["ID"] + "/", function (data) {
+                                        if (data.success) {
+                                            $.growlService("删除成功", {type: "success"});
+                                            table.ajax.reload();
+                                        } else {
+                                            $.growlService("删除失败", {type: "danger"})
+                                        }
+                                    })
+                                }
+                            });
+                            edit.on('click', function () {
+                                $("#attackForm2").clearForm();
+                                $("#attackForm2 input").each(function() {
+                                        var name = $(this).attr("name");
+                                        if (name && name != "csrfmiddlewaretoken") {
+                                            console.log(name + ": " + oData[name]);
+                                            $(this).val(oData[name]);
+                                        }
+                                    });
+                                $("#attackForm2").ajaxForm({
+                                    type: "post",
+                                    url: "/attack/tactics/data/edit/" + oData["ID"] + "/",    //提交到的url
+                                    success: function (data) {
+                                        if (data.success) {
+                                            $.growlService("修改成功", {type: "success"});
+                                            setTimeout(() => {
+                                                $('#myModal2').modal('hide')
+                                                $(".modal-backdrop").remove();
+                                                table.ajax.reload();
+                                            }, 1000);
+                                        } else {
+                                            console.log(data);
+                                            $.growlService(data["error_message"], {type: "danger"});
+                                        }
+                                    }
+                                });
+                            });
+                        }
+                    }
+        ],
+    });
+    // Add event listener for opening and closing details
+    $('#example tbody').on('click', 'td.dt-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+  });
+</script>
+<script>
+    $("#download").attr("href", "download_path");
+    $("#download").attr("download", "download_name");
+    //上传文件
+    $("#uploadForm").ajaxForm({
+        type: "post",
+        url: "",    //提交到的url
+        success: function (data) {
+            //判断文件格式
+            try {
+                var data1 = JSON.parse(data);
+                if (data1['error'] == 'not_xlsx') {
+                    alert("请检查文件格式！");
+                }
+            }
+            catch (e) {
+                if (data.success) {
+                    {#location.href = "#";#}
+                    setTimeout(() => {
+                      window.location.reload()
+                    }, 1000);
+                }
+                else {
+                    $.growlService("上传文件有误", {type: "danger"})
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

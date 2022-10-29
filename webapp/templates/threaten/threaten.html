@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+
+{% block header_js %}
+    <title>attack-rule_target</title>
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
+{% endblock %}
+
+{% block navname %}threaten{% endblock %}
+{% block navSon %}threaten{% endblock %}
+
+{% block content %}
+     <div class="content-wrapper" style="margin-left: 0px;">
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+{#                  <div class="card-header">#}
+{#                  </div>#}
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                      <div class="form-group" style="margin-top: 30px; margin-bottom: 30px; margin-left: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:20px;text-align: right;">威胁命中数据</b></label>
+                      </div>
+                        <form id="ruleForm" class="form-horizontal col-sm-12" method="get" onsubmit="" style="">
+                            {% csrf_token %}
+                            <div class="box-body" style="text-align: center">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group row" style="text-align: center; font-size:14px;">
+                                            <label class="col-sm-1 col-form-label">日志字段值</label>
+                                            <div class="col-sm-3" style="text-align: center">
+                                              <input type="text" class="form-control" id="log value" name="log value" placeholder="请输入日志字段值">
+                                            </div>
+{#                                            <label class="col-sm-2 col-form-label">技术ID</label>#}
+{#                                            <div class="col-sm-4" style="text-align: center">#}
+{#                                              <input type="text" class="form-control" id="techniques id" name="techniques id" placeholder="请输入技术ID">#}
+{#                                            </div>#}
+                                            <label class="col-sm-1 col-form-label">日志类型</label>
+                                            <div class="col-sm-3" style="text-align: center">
+                                                <select class="form-control select2" id="type" name="type" data-placeholder='选择类型' style="width: 100%;">
+                                                    <option value="" selected disabled>选择类型</option>
+                                                    {% for t in type %}
+                                                        <option value="{{ t }}">{{ t }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <label class="col-sm-1 col-form-label">攻击模式</label>
+                                            <div class="col-sm-3" style="text-align: center">
+                                              <input type="text" class="form-control" id="attack model" name="attack model" placeholder="请输入攻击模式">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" id="submit" class="btn btn-primary" style="width: 20%">
+                                            <i class="fas fa-search"></i>
+                                            <span>查询</span>
+                                            <div class="custom-control custom-switch" hidden="hidden">
+                                              <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                                              <label class="custom-control-label" for="customSwitch1"></label>
+                                            </div>
+                                        </button>
+                                        <button class="btn btn-default" id="reset" data-dismiss="modal" style="margin-left: 30px; width: 20%">
+                                            <i class="fas fa-undo"></i>
+                                            <span>重置</span>
+                                        </button>
+{#                                        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="margin-left: 30px; width: 20%">#}
+{#                                            <i class="fas fa-plus"></i>#}
+{#                                            <span>新建</span>#}
+{#                                        </button>#}
+{#                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal1" style="margin-left: 30px; width: 20%">#}
+{#                                              批量导入#}
+{#                                        </button>#}
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                      <div style="margin: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:15px;text-align: right;">导出数据请在下方选择导出选项:</b></label>
+                      </div>
+                    <table id="example" class="table table-bordered table-striped display">
+                        <thead>
+{#                            <tr>#}
+{#                                <th>日志字段</th>#}
+{#                                <th>日志字段值</th>#}
+{#                                <th>攻击模式</th>#}
+{#                                <th>技术ID</th>#}
+{#                                <th>技术名称</th>#}
+{#                                <th>创建时间</th>#}
+{#                                <th>操作</th>#}
+{#                            </tr>#}
+                        </thead>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+{#        新建弹出#}
+        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="box box-primary">
+                            <div class="row" style="width:90%; margin:0 auto; margin-top:40px" >
+                                <form id="createForm" class="form-horizontal col-sm-12" method="post" onsubmit="">
+                                    {% csrf_token %}
+                                    <div class="box-body" style="text-align: center">
+                                        <div class="form-group row" style="text-align: center">
+                                            <label class="col-sm-2 col-form-label">技术ID</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="ID" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" style="text-align: center">
+                                            <label class="col-sm-2 col-form-label">日志字段</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="ID" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" style="text-align: center">
+                                            <label class="col-sm-2 col-form-label">字段值</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="ID" required="required">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--box body -->
+
+                                    <div class="modal-footer" style="width:100%;">
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                        <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+{#                    </div>#}
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+    {#        导入弹出#}
+        <div class="modal fade" id="myModal1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel" style="font-size: 25px">导入数据</h4>
+
+                                <div class="box box-primary">
+                                    <div class="row">
+                                        <form id="uploadForm" class="form-horizontal" enctype="multipart/form-data" method="post">
+                                            {% csrf_token %}
+                                            <div class="box-body">
+                                                <div class="form-group">
+                                                    <label class="col-sm-6 control-label">上传Excel</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="file" class="form-control" style="height: 48px;" name="excel" id="excel" accept=".xlsx" required />
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="form-group">
+                                                    <label class="col-sm-12 control-label"><b style="font-size:10px;text-align: right;margin: 10px">提示:请选择指定格式的文件！</b></label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer" style="width:50%">
+                                                <button type="submit" class="btn btn-primary">提交</button>
+                                                <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal -->
+                </div>
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+
+{% endblock %}
+
+{% block footer_js %}
+<!-- jQuery -->
+<script src="/static/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/plugins/jszip/jszip.min.js"></script>
+<script src="/static/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/static/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/static/plugins/jszip/jszip.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
+
+<!-- AdminLTE App -->
+{#<script src="/static/dist/js/adminlte.min.js"></script>#}
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/bootstrap-growl.js"></script>
+<script>
+    $('#reservationtime').daterangepicker({
+      timePicker: true,
+      timePickerIncrement: 30,
+      locale: {
+        format: 'MM/DD/YYYY hh:mm A'
+      }
+    })
+    //新建
+    $("#createForm").ajaxForm({
+        type: "post",
+        url: "/threaten/target/data/create/",    //提交到的url
+        success: function (data) {
+            if (data.success) {
+                $.growlService("创建成功", {type: "success"});
+                setTimeout(() => {
+                  window.location.reload()
+                }, 1000);
+            } else {
+                console.log(data);
+                $.growlService(data["error_message"], {type: "danger"});
+            }
+        }
+    });
+    //上传文件
+    $("#uploadForm").ajaxForm({
+        type: "post",
+        url: "/threaten/target/import/data/",    //提交到的url
+        success: function (data) {
+            //判断文件格式
+            try {
+                var data1 = JSON.parse(data);
+                if (data1['error'] == 'not_xlsx') {
+                    alert("请检查文件格式！");
+                }
+            }
+            catch (e) {
+                if (data.success) {
+                    location.href = "#";
+                }
+                else {
+                    $.growlService("上传文件有误", {type: "danger"})
+                }
+            }
+        }
+    });
+</script>
+//datatables
+<script>
+    function format(d) {
+        //详情
+        var tr_td = ''
+        var row =0
+        for (i in d) {
+            if (row < 30){
+                tr_td += '<tr>' +
+                '<td>' + i + ':</td>' +
+                '<td>' +
+                d[i] +
+                '</td>' +
+                '</tr>'
+            }
+            row = row + 1
+        }
+        table_html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' + tr_td + '</table>'
+        return (
+            table_html
+        );
+    }
+  $(document).ready(function () {
+    var table = $("#example").DataTable({
+        "searching": false,//搜索框
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": true,
+        "dom": 'Bfrtip',
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "pageLength": 15,//每页显示数据
+        "bProcessing": true, //显示数据加载中\
+        {#ajax: '/threaten/target/data/',#}
+        "sAjaxSource": '/threaten/target/data/',
+        serverSide: true, //开启服务端模式
+        "fnServerData": function(sSource, aoData, fnCallback){
+            // 点击过搜索后每次datatables数据变动都会读取过滤参数
+            var customSwitch1 = document.getElementById("customSwitch1").checked
+            if (customSwitch1){
+                var log_value = document.getElementById("log value").value
+                var type = document.getElementById("type").value
+                var attack_model = document.getElementById("attack model").value
+                var search = {}
+                if (log_value){
+                    search['log value'] = log_value
+                }
+                if (type){
+                    search['type'] = type
+                }
+                if (attack_model){
+                    search['attack model'] = attack_model
+                }
+                aoData.push({'name': 'search', 'state': customSwitch1, 'value': search})
+            }
+            $.ajax( {
+                'type' : 'get',
+                "url": sSource,
+                "dataType": "json",
+                "data": { "aodata" : JSON.stringify(aoData) },
+                "success": function(resp) {
+                    fnCallback(resp);
+                }
+            });
+         },
+        columns: [
+            { data: 'name',title:'日志编号' },
+            { data: 'name',title:'日志名称' },
+            { data: 'type',title:'日志类型' ,
+                "defaultContent": ""
+            },
+            {data: "operation",title:'处置状态',
+                "defaultContent": "未处置",
+                "fnCreatedCell":function(nTd, sData, oData, iRow, iCol){
+                    var element = $(nTd).empty();
+                     if (sData == 'handle') {
+                         element.append("处置")
+                     }
+                     else if (sData == 'ignore') {
+                         element.append("忽略")
+                     }
+                     else{
+                         element.append('未处置')
+                     }
+             }
+            },
+            { data: 'event__start',title:'创建时间',
+                "defaultContent": ""
+            },
+            { data: 'attack model',title:'攻击模式',
+                "defaultContent": ""
+            },
+            { title:'查看',
+                "className": 'dt-control',
+                "orderable": false,
+                "data": null,
+                "defaultContent": '<a class="btn btn-info btn-sm" href="#"> <i class="fas"> </i>查看 </a>',
+            },
+            {#{ data: 'log byte', title: '日志字段'},#}
+            {#{ data: 'log value', title: '日志字段值'},#}
+            {#{ data: 'attack model', title: '攻击模式'},#}
+            {#{ data: 'techniques id', title: '技术ID'},#}
+            {#{ data: 'techniques name', title: '技术名称'},#}
+            {#{ data: 'created', title: '创建时间'},#}
+            {#{"data": null, "sClass": "center",#}
+            {#            "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {#}
+            {#                var element = $(nTd).empty();#}
+            {#                var manage = $('<a href="javascript:;">处置&nbsp&nbsp&nbsp&nbsp</a>');#}
+            {#                var ignore = $('<a href="javascript:;">忽略</a>');#}
+            {##}
+            {#                element.append(manage);#}
+            {#                element.append(ignore);#}
+            {##}
+            {#                manage.on('click', function () {#}
+            {#                    var con = confirm("是否确定处置？");#}
+            {#                    if (con) {#}
+            {#                        var params = {'operation': 'manage'}#}
+            {#                        $.get("/threaten/target/operation/" + oData["id"] + "/", params, function (data) {#}
+            {#                            if (data.success) {#}
+            {#                                $.growlService("处置操作成功！", {type: "success"});#}
+            {##}
+            {#                            } else {#}
+            {#                                $.growlService("处置操作失败！", {type: "danger"})#}
+            {#                            }#}
+            {#                        })#}
+            {#                    }#}
+            {#                });#}
+            {##}
+            {#                ignore.on('click', function () {#}
+            {#                    var con = confirm("是否确定忽略？");#}
+            {#                    if (con) {#}
+            {#                        console.log(oData["id"])#}
+            {#                        var params = {'operation': 'ignore'}#}
+            {#                        $.get("/threaten/target/operation/" + oData["id"] + "/", params, function (data) {#}
+            {#                            if (data.success) {#}
+            {#                                $.growlService("忽略操作成功", {type: "success"});#}
+            {#                                table.ajax.reload();#}
+            {#                            } else {#}
+            {#                                $.growlService("忽略操作失败", {type: "danger"})#}
+            {#                            }#}
+            {#                        })#}
+            {#                    }#}
+            {#                });#}
+            {#            }#}
+            {#        }#}
+        ],
+    });
+    // 查看详情
+    $('#example tbody').on('click', 'td.dt-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+    //查找
+    $("#submit").on('click', function () {
+        document.all.customSwitch1.checked=true
+        table.ajax.reload();
+     });
+    //重置按钮
+    $("#reset").on('click', function () {
+        document.getElementById("log value").value='';
+        document.getElementById("type").value='';
+        document.getElementById("attack model").value='';
+    });
+
+    //防止重载
+    $("#ruleForm").ajaxForm({
+
+      });
+  });
+</script>
+{% endblock %}

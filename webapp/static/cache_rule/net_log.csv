@@ -1,0 +1,17 @@
+log byte,log value,attack model,techniques id,techniques name
+code,104637,多端口扫描,T1595,Active Scanning
+code,105602,远程下载恶意文件,T1189,Drive-by Compromise
+code,104627,配置文件窃取,T1567,Exfiltration Over Web Service
+code,105080,系统命令执行,T1082,System Information Discovery
+code,105080,系统命令执行,T1614,System Location Discovery
+code,105080,系统命令执行,T1614.001,System Location Discovery: System Language Discovery
+code,105080,系统命令执行,T1016,System Network Configuration Discovery
+code,105080,系统命令执行,T1016.001,System Network Configuration Discovery: Internet Connection Discovery
+code,105080,系统命令执行,T1049,System Network Connections Discovery
+code,105080,系统命令执行,T1033,System Owner/User Discovery
+code,105080,系统命令执行,T1007,System Service Discovery
+code,105080,系统命令执行,T1569,System Services
+code,105080,系统命令执行,T1569.001,System Services: Launchctl
+code,105080,系统命令执行,T1569.002,System Services: Service Execution
+code,105080,系统命令执行,T1529,System Shutdown/Reboot
+code,105080,系统命令执行,T1124,System Time Discovery

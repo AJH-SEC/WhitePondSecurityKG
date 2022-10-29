@@ -1,0 +1,32 @@
+log byte,log value,attack model,techniques id,techniques name
+code,05008,应用漏洞攻击,T1190,Exploit Public-Facing Application
+code,01001,敏感文件探测,T1020,Automated Exfiltration
+code,03001,注入攻击,T1190,Exploit Public-Facing Application
+code,02002,植入可疑文件,T1205,Traffic Signaling
+code,09006,窃取文件攻击,T1567,Exfiltration Over Web Service
+code,02003,危险脚本上传,T1608,Stage Capabilities
+code,02001,植入后门文件,T1505,Server Software Component
+code,02001,植入后门文件,T1505.003,Server Software Component: Web Shell
+code,06003,服务器信息泄漏,T1592,Gather Victim Host Information
+code,09009,非法进入后台,T1080,Taint Shared Content
+code,09009,非法进入后台,T1528,Steal Application Access Token
+code,05006,系统密码窃取,T1552,Unsecured Credentials
+code,05010,Java反序列漏洞,T1190,Exploit Public-Facing Application
+code,09002,系统命令执行,T1082,System Information Discovery
+code,09002,系统命令执行,T1614,System Location Discovery
+code,09002,系统命令执行,T1614.001,System Location Discovery: System Language Discovery
+code,09002,系统命令执行,T1016,System Network Configuration Discovery
+code,09002,系统命令执行,T1016.001,System Network Configuration Discovery: Internet Connection Discovery
+code,09002,系统命令执行,T1049,System Network Connections Discovery
+code,09002,系统命令执行,T1033,System Owner/User Discovery
+code,09002,系统命令执行,T1007,System Service Discovery
+code,09002,系统命令执行,T1569,System Services
+code,09002,系统命令执行,T1569.001,System Services: Launchctl
+code,09002,系统命令执行,T1569.002,System Services: Service Execution
+code,09002,系统命令执行,T1529,System Shutdown/Reboot
+code,09002,系统命令执行,T1124,System Time Discovery
+code,09007,信息泄露扫描,T1592,Gather Victim Host Information
+code,09001,XXE 攻击,T1189,Drive-by Compromise
+code,06007,植入XSS跨站代码,T1189,Drive-by Compromise
+code,01002,爬虫攻击,T1595,Active Scanning
+code,03003,SQL盲注攻击,T1190,Exploit Public-Facing Application

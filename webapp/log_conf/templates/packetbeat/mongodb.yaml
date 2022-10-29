@@ -1,0 +1,71 @@
+name: packet_mongodb
+
+data: 
+  if_node: # 判断衍生节点信息
+    - filed: source
+      labels: [NET_ASSERT]
+      value: [ip, port]
+    - filed: destination
+      labels: [NET_ASSERT]
+      value: [ip, port]
+
+  if_node_attribute: # 新建节点属性
+    - filed: source
+      son_filed: __all
+    - filed: destination
+      son_filed: __all
+    - filed: agent
+      son_filed: __all
+    - filed: network
+      son_filed: __all
+    - filed: event
+      son_filed: __all
+    - filed: mongodb
+      son_filed: __all
+    - filed: host
+      son_filed: __all
+    - filed: status
+      son_filed: __all
+    - filed: url
+      son_filed: __all
+    - filed: query
+      son_filed: __all
+    - filed: client
+      son_filed: __all
+    - filed: server
+      son_filed: __all
+    - filed: type
+      son_filed: __all
+    - filed: method
+      son_filed: __all
+    - filed: query
+      son_filed: __all
+    - filed: path
+      son_filed: __all
+
+  if_node_labels: [MONGODB_NODE]
+
+  if_node_relationship: # 建立节点关系
+    filed_match: # 字段匹配，对匹配上的字段建立关系
+      - filed: source
+        dircertion: left
+        attr: [ip, port]
+        is_num: true # 是否将属性数量也作为关系关联标识
+        source_node_labels: [NET_ASSERT]
+        dest_node_labels: [MONGODB_NODE]
+        rs_label: MONGODB_RELATE_LABEL
+
+      - filed: destination
+        dircertion: right
+        attr: [ip, port]
+        is_num: true # 是否将属性数量也作为关系关联标识
+        source_node_labels: [MONGODB_NODE]
+        dest_node_labels: [NET_ASSERT]
+        rs_label: MONGODB_RELATE_LABEL
+
+    time_compare: # 时间匹配
+      - filed: event
+        forward: start
+        backward: end
+        dircertion: right
+  

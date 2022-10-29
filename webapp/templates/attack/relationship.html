@@ -1,0 +1,662 @@
+{% extends 'base.html' %}
+
+{% block header_js %}
+    <title>attack-relationship</title>
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="/static/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="/static/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/all.min.css">
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
+{% endblock %}
+
+{% block navname %}attack{% endblock %}
+{% block navSon %}relationship{% endblock %}
+
+{% block content %}
+     <div class="content-wrapper" style="margin-left: 0px;">
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+{#                  <div class="card-header">#}
+{#                  </div>#}
+                  <div class="card-body" style="display: none">
+                      <select class="form-control select2" style="width: 100%;">
+                      </select>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                      <div class="form-group" style="margin-top: 30px; margin-bottom: 30px; margin-left: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:20px;text-align: right;">节点关系列表</b></label>
+                      </div>
+                      <div class="col-12" style="display: inline-block;">
+                          <button type="submit" class="btn btn-primary col start float-left" data-toggle="modal" data-target="#myModal" style="width:100px;">
+                            <i class="fas fa-plus"></i>
+                            <span>新建</span>
+                          </button>
+{#                          <button type="button" class="btn btn-block btn-outline-secondary float-left " data-toggle="modal" data-target="#myModal1" style="width:130px;">#}
+{#                              批量导入#}
+{#                          </button>#}
+{#                          <a id="download">#}
+{#                              <button type="button" class="btn btn-block btn-outline-secondary float-right" style="width:130px;margin-right: 5px;">#}
+{#                                <i class="fas fa-download"></i> 下载#}
+{#                              </button>#}
+{#                          </a>#}
+                            <div class="col-md-2 float-right" style="margin-left: 80px">
+                            <div class="col-10 float-right">
+                                <label>选择节点类型</label>
+                                <select class="form-control select2" name="label_type_request" id="label_type_request" data-placeholder='选择类型' style="width: 114%;" required>
+                                    <option value="Tactics" selected disabled>Tactics</option>
+                                    {% for d in label %}
+                                        <option value="{{ d }}">{{ d }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            </div>
+                      </div>
+                      <div class="form-group" style="margin: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:15px;text-align: right;">导出数据请在下方选择导出选项:</b></label>
+                      </div>
+                    <table id="example" class="table table-bordered table-striped display">
+                        <thead>
+                            <tr>
+                                <th>源节点(label)</th>
+                                <th>源节点(ID)</th>
+                                <th>源节点(name)</th>
+                                <th>关系类型</th>
+                                <th>目标节点(label)</th>
+                                <th>目标节点(ID)</th>
+                                <th>目标节点(name)</th>
+                                <th>查看</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+{#        新建弹出#}
+        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width:200%;">
+                        <div class="box box-primary">
+                            <div class="row" style="width:90%; margin:0 auto; margin-top:40px" >
+                                <form id="attackForm" class="form-horizontal col-sm-12" method="post" onsubmit="" style="">
+                                    {% csrf_token %}
+                                    <div class="box-body" style="text-align: center">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h4>选择节点</h4>
+                                                <div class="form-group" style="margin-top: 75px">
+                                                  <select class="form-control select2" name="node1_label" id="label_type" data-placeholder='选择类型' style="width: 100%;" required>
+                                                    <option value="" selected disabled>选择类型</option>
+                                                    {% for d in label %}
+                                                        <option value="{{ d }}">{{ d }}</option>
+                                                    {% endfor %}
+                                                  </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>选择节点</label>
+                                                    <select class="form-control select2" name="node1" id="label_node" disabled="" data-placeholder='选择节点' required>
+                                                        <option value="" selected disabled>选择节点</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>节点关系</h4>
+                                                <label>关系类型</label>
+                                                <div class="form-group" style="text-align: center; margin-left: auto; margin-right: auto">
+                                                    <div class="col-sm-12">
+                                                      <input type="text" class="form-control" name="relationship" required="required">
+                                                    </div>
+                                                </div>
+                                                <label>关系指向</label>
+                                                <div class="form-group" style="text-align: center; margin-left: auto; margin-right: auto">
+                                                    <div class="row" style="align-items: center; justify-content: center">
+                                                        <div class="custom-control custom-checkbox">
+                                                          <input class="custom-control-input" type="checkbox" name="direction_left" id="customCheckbox1" onClick="sel1(this)" required>
+                                                          <label for="customCheckbox1" class="custom-control-label"></label>
+                                                        </div>
+                                                        <span class="fas fa-chevron-left">—————————</span>
+                                                        <span class="fas fa-chevron-right"></span>
+                                                        <div class="custom-control custom-checkbox">
+                                                          <input class="custom-control-input" type="checkbox" name="direction_right" id="customCheckbox2" onClick="sel2(this)" required>
+                                                          <label for="customCheckbox2" class="custom-control-label"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <label>关系属性</label>
+                                                <div class="form-group row" style="text-align: center; font-size:1px;">
+                                                    <label class="col-sm-2 col-form-label">属性名</label>
+                                                    <div class="col-sm-4" style="text-align: center">
+                                                      <input type="text" class="form-control" name="attribute_name">
+                                                    </div>
+                                                    <label class="col-sm-2 col-form-label">属性值</label>
+                                                    <div class="col-sm-4" style="text-align: center">
+                                                      <input type="text" class="form-control" name="attribute_value">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>选择节点</h4>
+                                                <div class="form-group" style="margin-top: 75px">
+                                                  <select class="form-control select2" name="node2_label" id="label_type1" data-placeholder='选择类型' style="width: 100%;" required>
+                                                    <option value="" selected disabled>选择类型</option>
+                                                    {% for d in label %}
+                                                        <option value="{{ d }}">{{ d }}</option>
+                                                    {% endfor %}
+                                                  </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>选择节点</label>
+                                                    <select class="form-control select2" name="node2" id="label_node1" disabled="" data-placeholder='选择节点' required>
+                                                        <option value="" selected disabled>选择节点</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer" style="width:100%;">
+                                        <button type="submit" id="submit" class="btn btn-primary">提交</button>
+                                        <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+{#                    </div>#}
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+{#        修改弹出#}
+        <div class="modal fade" id="myModal2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width:200%;">
+                        <div class="box box-primary">
+                            <div class="row" style="width:90%; margin:0 auto; margin-top:40px" >
+                                <form id="attackForm2" class="form-horizontal col-sm-12" method="post" onsubmit="" style="">
+                                    {% csrf_token %}
+                                    <div class="box-body" style="text-align: center">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h4>源节点</h4>
+                                                <div class="form-group" style="margin-top: 20px">
+                                                    <label>源节点(label)</label>
+                                                    <input type="text" class="form-control" name="start_node label" required="required" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>源节点(name)</label>
+                                                    <input type="text" class="form-control" name="start_node name" required="required" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>节点关系</h4>
+                                                <div class="form-group" style="text-align: center; margin-left: auto; margin-right: auto; margin-top: 20px">
+                                                    <div class="col-sm-12">
+                                                        <label>关系类型</label>
+                                                        <input type="text" class="form-control" name="relationship" required="required" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" style="text-align: center; margin-left: auto; margin-right: auto;">
+                                                    <div class="col-sm-12">
+                                                        <label>新类型（不修改即为原有类型）</label>
+                                                        <input type="text" class="form-control" name="new_relationship" required="required">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>目标节点</h4>
+{#                                                <div class="form-group" style="margin-top: 20px">#}
+{#                                                    <label>节点类型</label>#}
+{#                                                  <select class="form-control select2" name="node2_label" id="label_type2" data-placeholder='选择类型' style="width: 100%;" required>#}
+{#                                                      <option value="选择类型" name="end_node label" selected disabled>选择类型</option>#}
+{#                                                    {% for d in label %}#}
+{#                                                        <option value="{{ d }}">{{ d }}</option>#}
+{#                                                    {% endfor %}#}
+{#                                                  </select>#}
+{#                                                </div>#}
+{#                                                <div class="form-group">#}
+{#                                                    <label>目标节点</label>#}
+{#                                                    <select class="form-control select2" name="end_node name" id="label_node2" disabled="" data-placeholder='选择节点' required>#}
+{#                                                        <option value="选择节点" name="end_node name" selected disabled>选择节点</option>#}
+{#                                                    </select>#}
+{#                                                </div>#}
+                                                <div class="form-group" style="margin-top: 20px">
+                                                    <label>目标节点(label)</label>
+                                                    <input type="text" class="form-control" name="end_node label" required="required" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>目标节点(name)</label>
+                                                    <input type="text" class="form-control" name="end_node name" required="required" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer" style="width:100%;">
+                                        <button type="submit" id="submit" class="btn btn-primary">提交</button>
+                                        <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+{#                    </div>#}
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+{#        导入弹出#}
+        <div class="modal fade" id="myModal1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel" style="font-size: 25px">导入数据</h4>
+
+                                <div class="box box-primary">
+                                    <div class="row">
+                                        <form id="uploadForm" class="form-horizontal" enctype="multipart/form-data" method="post">
+                                            {% csrf_token %}
+                                            <div class="box-body">
+                                                <div class="form-group">
+                                                    <label class="col-sm-6 control-label">上传Excel</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="file" class="form-control" style="height: 48px;" name="excel" id="excel" accept=".xlsx" required />
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="form-group">
+                                                    <label class="col-sm-12 control-label"><b style="font-size:10px;text-align: right;margin: 10px">提示:请选择指定格式的文件！</b></label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer" style="width:50%">
+                                                <button type="submit" class="btn btn-primary">提交</button>
+                                                <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal -->
+                </div>
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+
+{% endblock %}
+
+{% block footer_js %}
+<!-- jQuery -->
+<script src="/static/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/plugins/jszip/jszip.min.js"></script>
+<script src="/static/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/static/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/static/plugins/jszip/jszip.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- Select2 -->
+<script src="/static/plugins/select2/js/select2.full.min.js"></script>
+<!-- AdminLTE App -->
+{#<script src="/static/dist/js/adminlte.min.js"></script>#}
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/bootstrap-growl.js"></script>
+//创建
+<script>
+    // 改变标签类型 加载不同数据
+    $('#label_type').on('change', function () {
+        var label_node =  $('#label_node');
+        label_node.removeAttr('disabled')
+        var label_node_doc =  document.getElementById("label_node");
+        var childs = label_node_doc.childNodes;
+        for(var i = childs.length - 1; i >= 0; i--) {
+            label_node_doc.removeChild(childs[i]);
+        }
+        label_node.append('<option value="" selected disabled>选择节点</option>')
+
+        var label_type = document.getElementById("label_type").value;
+        $.get("/attack/relationship/get_node/" + label_type + "/", function (data) {
+            if (data.success) {
+                var node = data.data
+                for (n in node) {
+                    label_node.append('<option>' + node[n] + '</option>')
+                }
+            } else {
+                $.growlService("获取节点失败", {type: "danger"})
+            }
+        })
+    });
+    $('#label_type1').on('change', function () {
+        var label_node1 =  $('#label_node1');
+        label_node1.removeAttr('disabled')
+        var label_node1_doc =  document.getElementById("label_node1");
+        var childs1 = label_node1_doc.childNodes;
+        for(var i = childs1.length - 1; i >= 0; i--) {
+            label_node1_doc.removeChild(childs1[i]);
+        }
+        label_node1.append('<option value="" selected disabled>选择节点</option>')
+
+        var label_type1 = document.getElementById("label_type1").value;
+        $.get("/attack/relationship/get_node/" + label_type1 + "/", function (data) {
+            if (data.success) {
+                var node1 = data.data
+                for (n in node1) {
+                    label_node1.append('<option>' + node1[n] + '</option>')
+                }
+            } else {
+                $.growlService("获取节点失败", {type: "danger"})
+            }
+        })
+    });
+    //选择框互斥
+    function sel1(obj){
+      if(obj.checked){
+       document.all.customCheckbox2.checked=false
+       $('#customCheckbox2').removeAttr('required')
+      }
+    }
+    function sel2(obj){
+      if(obj.checked){
+      document.all.customCheckbox1.checked=false
+      $('#customCheckbox1').removeAttr('required')
+      }
+    }
+    var i=0;
+    function addinput(){
+        i++;
+        document.getElementById("d").innerHTML+="<input type='text' id="+i+" />";
+    }
+    // 创建提交
+    $("#attackForm").ajaxForm({
+        type: "post",
+        url: "/attack/relationship/create/",    //提交到的url
+        success: function (data) {
+            if (data.success) {
+                $.growlService("创建成功", {type: "success"});
+                setTimeout(() => {
+                  window.location.reload()
+                }, 1000);
+            } else {
+                console.log(data)
+                $.growlService(data["error_message"], {type: "danger"});
+            }
+        }
+    });
+</script>
+//datatables
+<script>
+    function format(d) {
+        //详情
+        return (
+            '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+            {#'<tr>' +#}
+            {#'<td>Full name:</td>' +#}
+            {#'<td>' +#}
+            {#d.name +#}
+            {#'</td>' +#}
+            {#'</tr>' +#}
+            {#'<tr>' +#}
+            {#'<td>Extension number:</td>' +#}
+            {#'<td>' +#}
+            {#d.extn +#}
+            {#'</td>' +#}
+            {#'</tr>' +#}
+            {#'<tr>' +#}
+            {#'<td>Extra info:</td>' +#}
+            {#'<td>And any further details here (images etc)...</td>' +#}
+            {#'</tr>' +#}
+            '</table>'
+        );
+    }
+    var remarkShowLength = 20;//默认现实的字符串长度
+    //切换显示备注信息，显示部分或者全部
+    function changeShowRemarks(obj){//obj是td
+       var content = $(obj).attr("content");
+       if(content != null && content != ''){
+          if($(obj).attr("isDetail") == 'true'){//当前显示的是详细备注，切换到显示部分
+             //$(obj).removeAttr('isDetail');//remove也可以
+             $(obj).attr('isDetail',false);
+             $(obj).html(getPartialRemarksHtml(content));
+          }else{//当前显示的是部分备注信息，切换到显示全部
+             $(obj).attr('isDetail',true);
+             $(obj).html(getTotalRemarksHtml(content));
+          }
+       }
+    }
+    //部分备注信息
+    function getPartialRemarksHtml(remarks){
+          return remarks.substr(0,remarkShowLength) + '&nbsp;&nbsp;<a href="javascript:void(0);" ><b>...</b></a>';
+    }
+
+    //全部备注信息
+    function getTotalRemarksHtml(remarks){
+          return remarks + '&nbsp;&nbsp;<a href="javascript:void(0);" >收起</a>';
+    }
+  $(document).ready(function () {
+    var label_type_request = document.getElementById("label_type_request").value;
+    console.log(label_type_request)
+    var table = $("#example").DataTable({
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": true,
+        "dom": 'Bfrtip',
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "pageLength": 15,//每页显示数据
+        "bProcessing": true, //显示数据加载中\
+        "createdRow": function( row, data, dataIndex ) {
+           if(data["end_node name"].length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(6).attr('ondblclick','javascript:changeShowRemarks(this);');
+           }
+           $(row).children('td').eq(6).attr('content',data["end_node name"]);
+         },
+        {#"sAjaxSource": '/attack/relationship/data/'+ label_type_request + '/',#}
+        {#serverSide: true,#}
+        {#"fnServerData": function(sSource, aoData, fnCallback){#}
+        {#    var ao = aoData.push({'name': 'Search', 'value': '123'})#}
+        {#    console.log(ao, '--------')#}
+        {#    console.log(aoData, '--------')#}
+        {#    $.ajax( {#}
+        {#        'type' : 'get',#}
+        {#        "url": sSource,#}
+        {#        "dataType": "json",#}
+        {#        "data": { "aodata" : JSON.stringify(aoData) },#}
+        {#        "success": function(resp) {#}
+        {#            fnCallback(resp);#}
+        {#        }#}
+        {#    });#}
+        {# },#}
+        ajax: '/attack/relationship/data/'+ label_type_request + '/',
+        columns: [
+            { data: 'start_node label' },
+            { data: 'start_node id' },
+            { data: 'start_node name' },
+            { data: 'relationship' },
+            { data: 'end_node label' },
+            { data: 'end_node id' },
+            { data: 'end_node name' ,
+                "render": function (data, type, full, meta) {
+                    if (full["end_node name"].length > remarkShowLength) {
+                     return getPartialRemarksHtml(full["end_node name"]);//显示部分信息
+                    } else {
+                        return full["end_node name"];//显示原始全部信息
+                        }
+                    }
+            },
+            {
+                "className": 'dt-control',
+                "orderable": false,
+                "data": null,
+                "defaultContent": '<a class="btn btn-info btn-sm" href="#"> <i class="fas"> </i>查看 </a>',
+            },
+            {"data": null, "sClass": "center",
+                        "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            var element = $(nTd).empty();
+                            var edit = $('<a href="javascript:;" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal2" style="margin-right: 10px"> <i class="fas fa-pencil-alt"> </i>修改 </a>');
+                            var remove = $('<a href="javascript:;" class="btn btn-danger btn-sm remove111"> <i class="fas fa-trash"> </i>删除 </a>');
+
+                            element.append(edit);
+                            element.append(remove);
+                            remove.on('click', function () {
+                                var $tr = $(this).parents('tr');
+                                var con = confirm("确定删除？");
+                                if (con) {
+                                    console.log(oData["id"])
+                                    $.get("/attack/relationship/delete/" + oData["id"] + "/", oData, function (data) {
+                                        if (data.success) {
+                                            $.growlService("删除成功", {type: "success"});
+                                            table.ajax.reload();
+                                        } else {
+                                            $.growlService("删除失败", {type: "danger"})
+                                        }
+                                    })
+                                }
+                            });
+                            edit.on('click', function () {
+                                {#$('#label_type2').val(['选择类型']).trigger('change');#}
+                                {#$('#label_node2').val(['选择节点']).trigger('change');#}
+                                $("#attackForm2").clearForm();
+                                $("#attackForm2 input").each(function() {
+                                        var name = $(this).attr("name");
+                                        if (name && name != "csrfmiddlewaretoken") {
+                                            console.log(name + ": " + oData[name]);
+                                            $(this).val(oData[name]);
+                                        }
+                                        if (name == "new_relationship") {
+                                            console.log(name + ": " + oData[name]);
+                                            $(this).val(oData['relationship']);
+                                        }
+                                    });
+                                $("#attackForm2").ajaxForm({
+                                    type: "post",
+                                    url: "/attack/relationship/edit/",    //提交到的url
+                                    success: function (data) {
+                                        if (data.success) {
+                                            $.growlService("修改成功", {type: "success"});
+                                            setTimeout(() => {
+                                                $('#myModal2').modal('hide')
+                                                $(".modal-backdrop").remove();
+                                                table.ajax.reload();
+                                            }, 1000);
+                                        } else {
+                                            console.log(data);
+                                            $.growlService(data["error_message"], {type: "danger"});
+                                        }
+                                    }
+                                });
+                            });
+                        }
+                    }
+        ],
+    });
+    // 改变标签类型 加载不同数据
+    $('#label_type2').on('change', function () {
+        var label_node2 =  $('#label_node2');
+        label_node2.removeAttr('disabled')
+        var label_node2_doc =  document.getElementById("label_node2");
+        var childs2 = label_node2_doc.childNodes;
+        for(var i = childs2.length - 1; i >= 0; i--) {
+            label_node2_doc.removeChild(childs2[i]);
+        }
+        label_node2.append('<option value="" selected disabled>选择节点</option>')
+
+        var label_type2 = document.getElementById("label_type2").value;
+        $.get("/attack/relationship/get_node/" + label_type2 + "/", function (data) {
+            if (data.success) {
+                var node2 = data.data
+                for (n in node2) {
+                    label_node2.append('<option>' + node2[n] + '</option>')
+                }
+            } else {
+                $.growlService("获取节点失败", {type: "danger"})
+            }
+        })
+     });
+    // Add event listener for opening and closing details
+    $('#example tbody').on('click', 'td.dt-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+    $('#label_type_request').on('change', function () {
+        var label_type_request = document.getElementById("label_type_request").value;
+        table.ajax.url('/attack/relationship/data/'+ label_type_request + '/').load();
+    });
+  });
+</script>
+//上传文件
+<script>
+    $("#uploadForm").ajaxForm({
+        type: "post",
+        url: "",    //提交到的url
+        success: function (data) {
+            //判断文件格式
+            try {
+                var data1 = JSON.parse(data);
+                if (data1['error'] == 'not_xlsx') {
+                    alert("请检查文件格式！");
+                }
+            }
+            catch (e) {
+                if (data.success) {
+                    location.href = "#";
+                }
+                else {
+                    $.growlService("上传文件有误", {type: "danger"})
+                }
+            }
+        }
+    });
+</script>
+<script>
+    $("#download").attr("href", "download_path");
+    $("#download").attr("download", "download_name");
+    $(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2()
+    })
+</script>
+
+{% endblock %}
