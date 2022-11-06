@@ -1,0 +1,416 @@
+{% extends 'base.html' %}
+
+{% block header_js %}
+    <title>platform-classification</title>
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
+{% endblock %}
+
+{% block navname %}attack{% endblock %}
+{% block navSon %}platform{% endblock %}
+
+{% block content %}
+     <div class="content-wrapper" style="margin-left: 0px;">
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+{#                  <div class="card-header">#}
+{#                  </div>#}
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                      <div class="form-group" style="margin-top: 30px; margin-bottom: 30px; margin-left: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:20px;text-align: right;">平台管理</b></label>
+                      </div>
+                        <form id="tacticsForm" class="form-horizontal col-sm-12" method="post" onsubmit="" style="">
+                            {% csrf_token %}
+                            <div class="box-body" style="text-align: center">
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <div class="form-group row" style="text-align: center; font-size:15px;">
+                                            <label class="col-sm-2 col-form-label">平台类型</label>
+                                            <div class="col-sm-4" style="text-align: center">
+                                                <select class="form-control select2" id="platforms" name="platforms" data-placeholder='选择类型' style="width: 100%;">
+                                                    <option value="Windows" selected disabled>Windows</option>
+                                                    {% for platform in platforms %}
+                                                        <option value="{{ platform }}">{{ platform }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <label class="col-sm-2 col-form-label">attack类型</label>
+                                            <div class="col-sm-4" style="text-align: center">
+                                              <select class="form-control select2" name="attack_label" id="attack_label" data-placeholder='选择类型' style="width: 100%;">
+                                                    <option value="" selected disabled>选择attack类型</option>
+                                                    {% for label in attack_label_list %}
+                                                        <option value="{{ label }}">{{ label }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button type="submit" id="submit" class="btn btn-primary" style="width: 20%">
+                                            <i class="fas fa-search"></i>
+                                            <span>查询</span>
+                                            <div class="custom-control custom-switch" hidden="hidden">
+                                              <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                                              <label class="custom-control-label" for="customSwitch1"></label>
+                                            </div>
+                                        </button>
+                                        <button class="btn btn-default" id="reset" data-dismiss="modal" style="margin-left: 30px; width: 20%">
+                                            <i class="fas fa-undo"></i>
+                                            <span>重置</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                      <div style="margin: 0px;">
+                          <label class="col-sm-12 control-label"><b style="font-size:15px;text-align: right;">导出数据请在下方选择导出选项:</b></label>
+                      </div>
+                    <table id="example" class="table table-bordered table-striped display">
+                        <thead>
+                        </thead>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+{#        修改弹出#}
+        <div class="modal fade" id="myModal2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top: 50px">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="box box-primary">
+                            <div class="row" style="width:90%; margin:0 auto; margin-top:40px" >
+                                <form id="attackForm2" class="form-horizontal col-sm-12" method="post" onsubmit="">
+                                    {% csrf_token %}
+                                    <div class="box-body" style="text-align: center;margin-top: 50px">
+{#                                        <div class="form-group row" style="text-align: center">#}
+{#                                            <label class="col-sm-2 col-form-label">ID</label>#}
+{#                                            <div class="col-sm-10">#}
+{#                                              <input type="text" class="form-control" name="ID" required="required">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="form-group row">#}
+{#                                            <label class="col-sm-2 col-form-label">名称</label>#}
+{#                                            <div class="col-sm-10">#}
+{#                                              <input type="text" class="form-control" name="name" required="required">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="form-group row">#}
+{#                                            <label class="col-sm-2 col-form-label">描述信息</label>#}
+{#                                            <div class="col-sm-10">#}
+{#                                              <input type="text" class="form-control" name="description">#}
+{#                                            </div>#}
+{#                                        </div>#}
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">应用平台</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="platforms">
+                                            </div>
+                                        </div>
+{#                                        <div class="form-group row">#}
+{#                                            <label class="col-sm-2 col-form-label">信息链接</label>#}
+{#                                            <div class="col-sm-10">#}
+{#                                              <input type="text" class="form-control" name="url">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="form-group row">#}
+{#                                            <label class="col-sm-2 col-form-label">版本号</label>#}
+{#                                            <div class="col-sm-10">#}
+{#                                              <input type="text" class="form-control" name="version">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="form-group row">#}
+{#                                            <label class="col-sm-2 col-form-label">行业</label>#}
+{#                                            <div class="col-sm-10">#}
+{#                                              <input type="text" class="form-control" name="industry">#}
+{#                                            </div>#}
+{#                                        </div>#}
+                                    </div>
+                                    <!--box body -->
+
+                                    <div class="modal-footer" style="width:100%;">
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                        <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+{#                    </div>#}
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+
+{% endblock %}
+
+{% block footer_js %}
+<!-- jQuery -->
+<script src="/static/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/plugins/jszip/jszip.min.js"></script>
+<script src="/static/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/static/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/static/plugins/jszip/jszip.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
+
+<!-- AdminLTE App -->
+{#<script src="/static/dist/js/adminlte.min.js"></script>#}
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/bootstrap-growl.js"></script>
+<script>
+    $('#reservationtime').daterangepicker({
+      timePicker: true,
+      timePickerIncrement: 30,
+      locale: {
+        format: 'MM/DD/YYYY hh:mm A'
+      }
+    })
+    //搜索条件时间初始为空
+    document.getElementById("reservationtime").value='';
+</script>
+//datatables
+<script>
+    // 点击详情时的数据
+    function format(d) {
+        //详情
+        return (
+            '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+            '<tr>' +
+            '<td>行业</td>' +
+            '<td>' +
+            d.industry +
+            '</td>' +
+            '</tr>' +
+            '</table>'
+        );
+    }
+    //切换显示备注信息，显示部分或者全部
+    var remarkShowLength = 20;//默认现实的字符串长度
+    function changeShowRemarks(obj){//obj是td
+       var content = $(obj).attr("content");
+       if(content != null && content != ''){
+          if($(obj).attr("isDetail") == 'true'){//当前显示的是详细备注，切换到显示部分
+             //$(obj).removeAttr('isDetail');//remove也可以
+             $(obj).attr('isDetail',false);
+             $(obj).html(getPartialRemarksHtml(content));
+          }else{//当前显示的是部分备注信息，切换到显示全部
+             $(obj).attr('isDetail',true);
+             $(obj).html(getTotalRemarksHtml(content));
+          }
+       }
+    }
+    //部分备注信息
+    function getPartialRemarksHtml(remarks){
+          return remarks.substr(0,remarkShowLength) + '&nbsp;&nbsp;<a href="javascript:void(0);" ><b>...</b></a>';
+    }
+
+    //全部备注信息
+    function getTotalRemarksHtml(remarks){
+          return remarks + '&nbsp;&nbsp;<a href="javascript:void(0);" >收起</a>';
+    }
+  $(document).ready(function () {
+    var table = $("#example").DataTable({
+        "searching": false,//搜索框
+        "responsive": true,
+        "lengthChange": false,
+        "ordering": false,
+        "autoWidth": true,
+        "dom": 'Bfrtip',
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],// 导出的数据格式
+        "pageLength": 15,//每页显示数据
+        "bProcessing": true, //显示数据加载中\
+        "createdRow": function( row, data, dataIndex ) {
+           if(data.description.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(2).attr('ondblclick','javascript:changeShowRemarks(this);');
+           }
+           $(row).children('td').eq(2).attr('content',data.description);
+         },
+        "sAjaxSource": '/platform/management/data/',
+        serverSide: true, //开启服务端模式
+        "fnServerData": function(sSource, aoData, fnCallback){
+            // 点击过搜索后每次datatables数据变动都会读取过滤参数
+            var customSwitch1 = document.getElementById("customSwitch1").checked
+            if (customSwitch1){
+                var platforms = document.getElementById("platforms").value
+                var attack_label = document.getElementById("attack_label").value
+                var search = {}
+                if (platforms){
+                    search['platforms'] = platforms
+                }
+                if (attack_label){
+                    search['attack_label'] = attack_label
+                }
+                aoData.push({'name': 'search', 'state': customSwitch1, 'value': search})
+            }
+            $.ajax( {
+                'type' : 'get',
+                "url": sSource,
+                "dataType": "json",
+                "data": { "aodata" : JSON.stringify(aoData) },
+                "success": function(resp) {
+                    fnCallback(resp);
+                }
+            });
+         },
+        {#ajax: '/logquery/query/data/',#}
+        columns: [
+            { data: 'ID',title: 'ID'},
+            { data: 'name',title: '名称'},
+            { data: 'description',title: '描述信息',
+                "defaultContent": "",
+                "render": function (data, type, full, meta) {
+                    if (full.description.length > remarkShowLength) {
+                     return getPartialRemarksHtml(full.description);//显示部分信息
+                    } else {
+                        return full.description;//显示原始全部信息
+                        }
+                    }
+            },
+            { data: 'platforms',title: '应用平台',
+                "defaultContent": ""
+            },
+            { data: 'url',title: '信息链接',
+                "defaultContent": ""
+            },
+            { data: 'created',title: '创建时间',
+                "defaultContent": ""
+            },
+            { data: 'last modified',title: '修改时间',
+                "defaultContent": ""
+            },
+            { data: 'version',title: '版本号',
+                "defaultContent": ""
+            },
+            {
+                "className": 'dt-control',
+                "orderable": false,
+                "data": null,
+                "defaultContent": '<a class="btn btn-info btn-sm" href="#"> <i class="fas"> </i>查看 </a>',
+             },
+            {"data": null,title: '操作', "sClass": "center",
+                        "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            var element = $(nTd).empty();
+                            var edit = $('<a href="javascript:;" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal2" style="margin-right: 10px"> <i class="fas fa-pencil-alt"> </i>修改 </a>');
+                            var remove = $('<a href="javascript:;" class="btn btn-danger btn-sm remove111"> <i class="fas fa-trash"> </i>删除 </a>');
+
+                            // 添加相关的操作到页面
+                            element.append(edit);
+                            element.append(remove);
+                            // 相关操作的触发
+                            remove.on('click', function () {
+                                var $tr = $(this).parents('tr');
+                                var con = confirm("确定删除？");
+                                if (con) {
+                                    console.log(oData["id"])
+                                    var params = {'label': oData["label"]}
+                                    $.get("/platform/management/delete/" + oData["ID"] + "/",params, function (data) {
+                                        if (data.success) {
+                                            $.growlService("删除成功", {type: "success"});
+                                            table.ajax.reload();
+                                        } else {
+                                            $.growlService("删除失败", {type: "danger"})
+                                        }
+                                    })
+                                }
+                            });
+                            edit.on('click', function () {
+                                $("#attackForm2").clearForm();
+                                $("#attackForm2 input").each(function() {
+                                        var name = $(this).attr("name");
+                                        if (name && name != "csrfmiddlewaretoken") {
+                                            console.log(name + ": " + oData[name]);
+                                            $(this).val(oData[name]);
+                                        }
+                                    });
+                                $("#attackForm2").ajaxForm({
+                                    type: "post",
+                                    url: "/platform/management/data/edit/" + oData["ID"] + "/",    //提交到的url
+                                    success: function (data) {
+                                        if (data.success) {
+                                            $.growlService("修改成功", {type: "success"});
+                                            setTimeout(() => {
+                                                $('#myModal2').modal('hide')
+                                                $(".modal-backdrop").remove();
+                                                table.ajax.reload();
+                                            }, 1000);
+                                        } else {
+                                            console.log(data);
+                                            $.growlService(data["error_message"], {type: "danger"});
+                                        }
+                                    }
+                                });
+                            });
+                        }
+                    }
+        ],
+    });
+    // Add event listener for opening and closing details
+    $('#example tbody').on('click', 'td.dt-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+    //查找 开启服务端模式后此处只提供重载功能
+    $("#submit").on('click', function () {
+        document.all.customSwitch1.checked=true
+        table.ajax.reload();
+
+    });
+    //重置按钮
+    $("#reset").on('click', function () {
+        document.all.customSwitch1.checked=false
+        document.getElementById("attack_label").value='';
+    });
+
+    //防止重载
+    $("#tacticsForm").ajaxForm({
+
+      });
+  });
+</script>
+{% endblock %}

@@ -163,6 +163,7 @@
 <script src="/static/js/jquery.form.js"></script>
 <script src="/static/js/bootstrap-growl.js"></script>
 <script>
+// 获取attack标签对应的数量
 $.get("/attack/overview/data/", function (data) {
         if (data.success) {
             console.log(data.data.overview)
@@ -194,7 +195,7 @@ $.get("/attack/overview/data/", function (data) {
     })
 </script>
 <script>
-    //上传文件
+    //上传文件 批量导入
     $("#uploadForm").ajaxForm({
         type: "post",
         url: "/attack/overview/import/data/",

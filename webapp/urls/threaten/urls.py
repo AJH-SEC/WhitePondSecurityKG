@@ -3,6 +3,7 @@ from django.conf.urls import url
 from webapp.services.threaten import views
 
 urlpatterns = [
+    # 威胁命中
     url(r'^target/$', views.threaten, {"template_name": "threaten/threaten.html"}, name="threaten"),
     url(r'^target/data/$', views.threaten_data),
     # url(r'^target/data/create/$', views.threaten_create),

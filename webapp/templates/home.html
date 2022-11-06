@@ -238,6 +238,7 @@
           {#plugins: [ minimap, grid ],    // 将 Minimap 和 Grid 插件的实例配置到图上#}
           fitCenter: true,
         });
+        {#获取数据#}
         $.get("/home/data/", data => {
             const main = async () => {
                  if (data.success) {
@@ -321,6 +322,7 @@
             };
         main();
         });
+        {#超长隐藏#}
 const fittingString = (str, maxWidth, fontSize) => {
   const ellipsis = '...';
   const ellipsisLength = G6.Util.getTextSize(ellipsis, fontSize)[0];

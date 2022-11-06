@@ -97,66 +97,149 @@
                           <p>总览</p>
                         </a>
                       </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_tactics' %}" class="nav-link" id="nav-attack-tactics">
+                      <li class="nav-item" id="nav-attack-information">
+                        <a href="#" class="nav-link">
                           <i class="far fa-circle nav-icon"></i>
-                          <p>战术管理</p>
+                          <p>
+                            基础信息
+                            <i class="right fas fa-angle-left"></i>
+                          </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{% url 'attack_tactics' %}" class="nav-link" id="nav-attack-information-tactics">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>战术管理</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'attack_technology' %}" class="nav-link" id="nav-attack-information-technology">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>技术管理</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'attack_sub_technology' %}" class="nav-link" id="nav-attack-information-sub_technology">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>子技术管理</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'attack_mitigations' %}" class="nav-link" id="nav-attack-information-mitigations">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>缓解措施管理</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'attack_organization' %}" class="nav-link" id="nav-attack-information-organization">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>组织管理</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'attack_software' %}" class="nav-link" id="nav-attack-information-software">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>软件管理</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'attack_data_sources' %}" class="nav-link" id="nav-attack-information-data_sources">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>数据资源管理</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'attack_datasource_component' %}" class="nav-link" id="nav-attack-information-datasource_component">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>数据组件</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'attack_campaign' %}" class="nav-link" id="nav-attack-information-campaign">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>战役管理</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'attack_relationship' %}" class="nav-link" id="nav-attack-information-relationship">
+                              <i class="far fa-dot-circle nav-icon"></i>
+                              <p>关系管理</p>
+                            </a>
+                          </li>
+                        </ul>
                       </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_technology' %}" class="nav-link" id="nav-attack-technology">
+                    <li class="nav-item">
+                        <a href="{% url 'platform_management' %}" class="nav-link" id="nav-attack-platform">
                           <i class="far fa-circle nav-icon"></i>
-                          <p>技术管理</p>
+                          <p>平台管理</p>
                         </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_sub_technology' %}" class="nav-link" id="nav-attack-sub_technology">
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'industry_management' %}" class="nav-link" id="nav-attack-industry">
                           <i class="far fa-circle nav-icon"></i>
-                          <p>子技术管理</p>
+                          <p>行业管理</p>
                         </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_mitigations' %}" class="nav-link" id="nav-attack-mitigations">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>缓解措施管理</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_organization' %}" class="nav-link" id="nav-attack-organization">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>组织管理</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_software' %}" class="nav-link" id="nav-attack-software">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>软件管理</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_data_sources' %}" class="nav-link" id="nav-attack-data_sources">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>数据资源管理</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_datasource_component' %}" class="nav-link" id="nav-attack-datasource_component">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>数据组件</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_campaign' %}" class="nav-link" id="nav-attack-campaign">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>战役管理</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="{% url 'attack_relationship' %}" class="nav-link" id="nav-attack-relationship">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>关系管理</p>
-                        </a>
-                      </li>
+                    </li>
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_tactics' %}" class="nav-link" id="nav-attack-tactics">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>战术管理</p>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_technology' %}" class="nav-link" id="nav-attack-technology">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>技术管理</p>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_sub_technology' %}" class="nav-link" id="nav-attack-sub_technology">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>子技术管理</p>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_mitigations' %}" class="nav-link" id="nav-attack-mitigations">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>缓解措施管理</p>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_organization' %}" class="nav-link" id="nav-attack-organization">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>组织管理</p>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_software' %}" class="nav-link" id="nav-attack-software">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>软件管理</p>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_data_sources' %}" class="nav-link" id="nav-attack-data_sources">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>数据资源管理</p>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_datasource_component' %}" class="nav-link" id="nav-attack-datasource_component">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>数据组件</p>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_campaign' %}" class="nav-link" id="nav-attack-campaign">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>战役管理</p>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li class="nav-item">#}
+{#                        <a href="{% url 'attack_relationship' %}" class="nav-link" id="nav-attack-relationship">#}
+{#                          <i class="far fa-circle nav-icon"></i>#}
+{#                          <p>关系管理</p>#}
+{#                        </a>#}
+{#                      </li>#}
                 </ul>
               </li>
               <li class="nav-item" id="nav-log">
@@ -226,6 +309,14 @@
                     </a>
                   </li>
                 </ul>
+              </li>
+              <li class="nav-item" id="nav-home">
+                <a href="{% url 'configuration' %}" class="nav-link" id="nav-configuration-configuration">
+                  <i class="nav-icon fas fa-cogs"></i>
+                  <p>
+                    配置管理
+                  </p>
+                </a>
               </li>
           </ul>
           </nav>
@@ -297,6 +388,7 @@
     console.log(son_nav)
     console.log(deep_nav)
     $(nav).addClass("menu-is-opening menu-open");
+    $(son_nav).addClass("menu-is-opening menu-open");
     $(son_nav).addClass("active");
     $(deep_nav).addClass("active");
 </script>

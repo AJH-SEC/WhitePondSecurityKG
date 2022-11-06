@@ -9,7 +9,14 @@ class User(models.Model):
     password = models.CharField(max_length=256, null=True, verbose_name="密码")
 
 
+# 日志命中数量（未使用）
 class ThreatenHit(models.Model):
     id = models.AutoField(primary_key=True)
     log_date = models.DateField(verbose_name="日志产生时间", unique=True)
     hit_count = models.IntegerField(verbose_name="命中数量")
+
+
+# 配置管理数据
+class Configuration(models.Model):
+    id = models.AutoField(primary_key=True)
+    industry = models.CharField(verbose_name="行业", max_length=256)

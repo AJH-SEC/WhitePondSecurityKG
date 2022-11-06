@@ -3,6 +3,7 @@ from django.conf.urls import url
 from webapp.services.rule import views
 
 urlpatterns = [
+    # 命中规则
     url(r'^target/$', views.rule_target, {"template_name": "rule/rule.html"}, name="rule"),
     url(r'^target/data/$', views.rule_target_data),
     url(r'^target/data/create/$', views.rule_target_create),

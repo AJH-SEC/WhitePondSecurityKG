@@ -273,6 +273,7 @@
 </script>
 //datatables
 <script>
+    //  点击详情展示的数据
     function format(d) {
         //详情
         var tr_td = ''
@@ -300,7 +301,7 @@
         "lengthChange": false,
         "autoWidth": true,
         "dom": 'Bfrtip',
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],// 导出的数据格式
         "pageLength": 15,//每页显示数据
         "bProcessing": true, //显示数据加载中\
         {#ajax: '/threaten/target/data/',#}
@@ -417,7 +418,7 @@
             {#        }#}
         ],
     });
-    // 查看详情
+    // 查看详情触发
     $('#example tbody').on('click', 'td.dt-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row(tr);

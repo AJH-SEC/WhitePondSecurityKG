@@ -20,7 +20,8 @@
 {% endblock %}
 
 {% block navname %}attack{% endblock %}
-{% block navSon %}relationship{% endblock %}
+{% block navSon %}information{% endblock %}
+{% block navDeep %}relationship{% endblock %}
 
 {% block content %}
      <div class="content-wrapper" style="margin-left: 0px;">
@@ -337,7 +338,7 @@
 <script src="/static/js/bootstrap-growl.js"></script>
 //创建
 <script>
-    // 改变标签类型 加载不同数据
+    // 选择不同节点加载相应节点下的节点名称列表
     $('#label_type').on('change', function () {
         var label_node =  $('#label_node');
         label_node.removeAttr('disabled')
@@ -360,6 +361,7 @@
             }
         })
     });
+    // 选择不同节点加载相应节点下的节点名称列表
     $('#label_type1').on('change', function () {
         var label_node1 =  $('#label_node1');
         label_node1.removeAttr('disabled')
@@ -474,7 +476,7 @@
         "lengthChange": false,
         "autoWidth": true,
         "dom": 'Bfrtip',
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"], // 导出的数据格式
         "pageLength": 15,//每页显示数据
         "bProcessing": true, //显示数据加载中\
         "createdRow": function( row, data, dataIndex ) {
@@ -522,14 +524,17 @@
                 "data": null,
                 "defaultContent": '<a class="btn btn-info btn-sm" href="#"> <i class="fas"> </i>查看 </a>',
             },
+            // 操作相关
             {"data": null, "sClass": "center",
                         "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
                             var element = $(nTd).empty();
                             var edit = $('<a href="javascript:;" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal2" style="margin-right: 10px"> <i class="fas fa-pencil-alt"> </i>修改 </a>');
                             var remove = $('<a href="javascript:;" class="btn btn-danger btn-sm remove111"> <i class="fas fa-trash"> </i>删除 </a>');
 
+                            // 添加相关的操作到页面
                             element.append(edit);
                             element.append(remove);
+                            // 相关操作的触发
                             remove.on('click', function () {
                                 var $tr = $(this).parents('tr');
                                 var con = confirm("确定删除？");
@@ -605,7 +610,7 @@
             }
         })
      });
-    // Add event listener for opening and closing details
+    // 详情触发
     $('#example tbody').on('click', 'td.dt-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row(tr);
@@ -620,6 +625,7 @@
             tr.addClass('shown');
         }
     });
+    // 选择不通节点加载相应的table数据
     $('#label_type_request').on('change', function () {
         var label_type_request = document.getElementById("label_type_request").value;
         table.ajax.url('/attack/relationship/data/'+ label_type_request + '/').load();

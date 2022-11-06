@@ -18,7 +18,7 @@ from webapp.shortcuts.ajax import ajax_success, ajax_error
 @login_required
 def attack_overview(request, template_name):
     """
-    overview页面
+    总览页面
     """
     dic = showNode()
 
@@ -28,19 +28,19 @@ def attack_overview(request, template_name):
 @login_required
 def attack_overview_data(request):
     """
-    overview数据
+    总览页面 柱状图数据
     """
     try:
         dic = showNode()
         return ajax_success(data=dic)
     except Exception as e:
-        return ajax_error("创建失败")
+        return ajax_error("数据加载失败")
 
 
 @login_required
 def attack_overview_import_data(request):
     """
-    overview 批量导入
+    总览页面 批量导入
     """
     if request.method != "POST":
         return ajax_error("上传失败")
@@ -56,6 +56,7 @@ def attack_overview_import_data(request):
             dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
             dir_path = os.path.dirname(dir_path)
             cache_path = os.path.join(dir_path, 'static', 'cache_data')
+            # 处理excel
             read_excel(excel, cache_path)
             time.sleep(10)
             load_graph(cache_path)
@@ -71,7 +72,7 @@ def attack_overview_import_data(request):
 @login_required
 def attack_tactics(request, template_name):
     """
-    tactics页面
+    战术管理 页面
     """
 
     return render(request, template_name)
@@ -80,7 +81,7 @@ def attack_tactics(request, template_name):
 @login_required
 def attack_tactics_data(request):
     """
-    tactics数据
+    战术管理 datatables展示的数据
     """
     data = {'data': searchNode(NodeLabel.TACTICS)}
     return HttpResponse(json.dumps(data))
@@ -89,7 +90,7 @@ def attack_tactics_data(request):
 @login_required
 def attack_tactics_create(request):
     """
-    tactics 创建
+    战术管理 创建
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -109,7 +110,7 @@ def attack_tactics_create(request):
 @login_required
 def attack_tactics_edit(request, id):
     """
-    tactics 数据修改
+    战术管理 数据修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -129,7 +130,7 @@ def attack_tactics_edit(request, id):
 @login_required
 def attack_tactics_delete(request, id):
     """
-    tactics 删除
+    战术管理 删除
     """
     try:
         deleteNode(NodeLabel.TACTICS, {'ID': id})
@@ -143,7 +144,7 @@ def attack_tactics_delete(request, id):
 @login_required
 def attack_technology(request, template_name):
     """
-    technology页面
+    技术管理 页面
     """
 
     return render(request, template_name)
@@ -152,7 +153,7 @@ def attack_technology(request, template_name):
 @login_required
 def attack_technology_data(request):
     """
-    technology数据
+    技术管理 datatables展示的数据
     """
     data = {'data': searchNode(NodeLabel.TECHNIQUES)}
     return HttpResponse(json.dumps(data))
@@ -161,7 +162,7 @@ def attack_technology_data(request):
 @login_required
 def attack_technology_create(request):
     """
-    technology 创建
+    技术管理 创建
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -181,7 +182,7 @@ def attack_technology_create(request):
 @login_required
 def attack_technology_edit(request, id):
     """
-    technology 修改
+    技术管理 修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -201,7 +202,7 @@ def attack_technology_edit(request, id):
 @login_required
 def attack_technology_delete(request, id):
     """
-    technology 删除
+    技术管理 删除
     """
     try:
         deleteNode(NodeLabel.TECHNIQUES, {'ID': id})
@@ -215,7 +216,7 @@ def attack_technology_delete(request, id):
 @login_required
 def attack_sub_technology(request, template_name):
     """
-    sub_technology 页面
+    子技术管理 页面
     """
 
     return render(request, template_name)
@@ -224,7 +225,7 @@ def attack_sub_technology(request, template_name):
 @login_required
 def attack_sub_technology_data(request):
     """
-    sub_technology 数据
+    子技术管理 数据
     """
     data = {'data': searchNode(NodeLabel.SUBTECHNIQUES)}
     return HttpResponse(json.dumps(data))
@@ -233,7 +234,7 @@ def attack_sub_technology_data(request):
 @login_required
 def attack_sub_technology_create(request):
     """
-    sub_technology 创建
+    子技术管理 创建
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -253,7 +254,7 @@ def attack_sub_technology_create(request):
 @login_required
 def attack_sub_technology_edit(request, id):
     """
-    sub_technology 修改
+    子技术管理 修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -273,7 +274,7 @@ def attack_sub_technology_edit(request, id):
 @login_required
 def attack_sub_technology_delete(request, id):
     """
-    sub_technology 删除
+    子技术管理 删除
     """
     try:
         deleteNode(NodeLabel.SUBTECHNIQUES, {'ID': id})
@@ -287,7 +288,7 @@ def attack_sub_technology_delete(request, id):
 @login_required
 def attack_mitigations(request, template_name):
     """
-    mitigations 页面
+    缓解措施管理 页面
     """
 
     return render(request, template_name)
@@ -296,7 +297,7 @@ def attack_mitigations(request, template_name):
 @login_required
 def attack_mitigations_data(request):
     """
-    mitigations 数据
+    缓解措施管理 数据
     """
     data = {'data': searchNode(NodeLabel.MITIGATIONS)}
     return HttpResponse(json.dumps(data))
@@ -305,7 +306,7 @@ def attack_mitigations_data(request):
 @login_required
 def attack_mitigations_create(request):
     """
-    mitigations 创建
+    缓解措施管理 创建
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -325,7 +326,7 @@ def attack_mitigations_create(request):
 @login_required
 def attack_mitigations_edit(request, id):
     """
-    mitigations 修改
+    缓解措施管理 修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -345,7 +346,7 @@ def attack_mitigations_edit(request, id):
 @login_required
 def attack_mitigations_delete(request, id):
     """
-    mitigations 删除
+    缓解措施管理 删除
     """
     try:
         deleteNode(NodeLabel.MITIGATIONS, {'ID': id})
@@ -359,7 +360,7 @@ def attack_mitigations_delete(request, id):
 @login_required
 def attack_organization(request, template_name):
     """
-    organization 页面
+    组织管理 页面
     """
 
     return render(request, template_name)
@@ -368,7 +369,7 @@ def attack_organization(request, template_name):
 @login_required
 def attack_organization_data(request):
     """
-    organization 数据
+    组织管理 数据
     """
     data = {'data': searchNode(NodeLabel.GROUPS)}
     return HttpResponse(json.dumps(data))
@@ -377,7 +378,7 @@ def attack_organization_data(request):
 @login_required
 def attack_organization_create(request):
     """
-    organization 创建
+    组织管理 创建
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -397,7 +398,7 @@ def attack_organization_create(request):
 @login_required
 def attack_organization_edit(request, id):
     """
-    organization 修改
+    组织管理 修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -417,7 +418,7 @@ def attack_organization_edit(request, id):
 @login_required
 def attack_organization_delete(request, id):
     """
-    organization 删除
+    组织管理 删除
     """
     try:
         deleteNode(NodeLabel.GROUPS, {'ID': id})
@@ -431,7 +432,7 @@ def attack_organization_delete(request, id):
 @login_required
 def attack_software(request, template_name):
     """
-    software 页面
+    软件管理 页面
     """
 
     return render(request, template_name)
@@ -440,7 +441,7 @@ def attack_software(request, template_name):
 @login_required
 def attack_software_data(request):
     """
-    software 数据
+    软件管理 数据
     """
     data = {'data': searchNode(NodeLabel.SOFTWARE)}
     return HttpResponse(json.dumps(data))
@@ -449,7 +450,7 @@ def attack_software_data(request):
 @login_required
 def attack_software_create(request):
     """
-    software 创建
+    软件管理 创建
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -469,7 +470,7 @@ def attack_software_create(request):
 @login_required
 def attack_software_edit(request, id):
     """
-    software 修改
+    软件管理 修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -489,7 +490,7 @@ def attack_software_edit(request, id):
 @login_required
 def attack_software_delete(request, id):
     """
-    software 删除
+    软件管理 删除
     """
     try:
         deleteNode(NodeLabel.SOFTWARE, {'ID': id})
@@ -503,7 +504,7 @@ def attack_software_delete(request, id):
 @login_required
 def attack_data_sources(request, template_name):
     """
-    data_sources 页面
+    数据资源管理 页面
     """
 
     return render(request, template_name)
@@ -512,7 +513,7 @@ def attack_data_sources(request, template_name):
 @login_required
 def attack_data_sources_data(request):
     """
-    data_sources 数据
+    数据资源管理 数据
     """
     data = {'data': searchNode(NodeLabel.DATASOURCE)}
     return HttpResponse(json.dumps(data))
@@ -521,7 +522,7 @@ def attack_data_sources_data(request):
 @login_required
 def attack_data_sources_create(request):
     """
-    data_sources 创建
+    数据资源管理 创建
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -541,7 +542,7 @@ def attack_data_sources_create(request):
 @login_required
 def attack_data_sources_edit(request, id):
     """
-    data_sources 修改
+    数据资源管理 修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -561,7 +562,7 @@ def attack_data_sources_edit(request, id):
 @login_required
 def attack_data_sources_delete(request, id):
     """
-    data_sources 删除
+    数据资源管理 删除
     """
     try:
         deleteNode(NodeLabel.DATASOURCE, {'ID': id})
@@ -575,7 +576,7 @@ def attack_data_sources_delete(request, id):
 @login_required
 def attack_datasource_component(request, template_name):
     """
-    datasource_component 页面
+    数据组件 页面
     """
 
     return render(request, template_name)
@@ -584,7 +585,7 @@ def attack_datasource_component(request, template_name):
 @login_required
 def attack_datasource_component_data(request):
     """
-    datasource_component 数据
+    数据组件 数据
     """
     data = {'data': searchNode(NodeLabel.DATASOURCECOMPONENT)}
     return HttpResponse(json.dumps(data))
@@ -593,7 +594,7 @@ def attack_datasource_component_data(request):
 @login_required
 def attack_datasource_component_create(request):
     """
-    datasource_component 创建
+    数据组件 创建
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -613,7 +614,7 @@ def attack_datasource_component_create(request):
 @login_required
 def attack_datasource_component_edit(request, name):
     """
-    datasource_component 修改
+    数据组件 修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -633,7 +634,7 @@ def attack_datasource_component_edit(request, name):
 @login_required
 def attack_datasource_component_delete(request, name):
     """
-    datasource_component 删除
+    数据组件 删除
     """
     try:
         deleteNode(NodeLabel.DATASOURCECOMPONENT, {'name': name})
@@ -647,7 +648,7 @@ def attack_datasource_component_delete(request, name):
 @login_required
 def attack_campaign(request, template_name):
     """
-    datasource_component 页面
+    战役 页面
     """
 
     return render(request, template_name)
@@ -656,7 +657,7 @@ def attack_campaign(request, template_name):
 @login_required
 def attack_campaign_data(request):
     """
-    campaign 数据
+    战役 datatables数据
     """
     data = {'data': searchNode(NodeLabel.CAMPAIGN)}
     return HttpResponse(json.dumps(data))
@@ -665,7 +666,7 @@ def attack_campaign_data(request):
 @login_required
 def attack_campaign_create(request):
     """
-    campaign 创建
+    战役 创建
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -685,7 +686,7 @@ def attack_campaign_create(request):
 @login_required
 def attack_campaign_edit(request, name):
     """
-    campaign 修改
+    战役 修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -705,7 +706,7 @@ def attack_campaign_edit(request, name):
 @login_required
 def attack_campaign_delete(request, name):
     """
-    campaign 删除
+    战役 删除
     """
     try:
         deleteNode(NodeLabel.CAMPAIGN, {'name': name})
@@ -719,7 +720,7 @@ def attack_campaign_delete(request, name):
 @login_required
 def attack_relationship(request, template_name):
     """
-    relationship 页面
+    关系页面
     """
     # res = showNode(only_show=True)
     res = {'label': ATTACK_LABEL_LIST}
@@ -730,7 +731,7 @@ def attack_relationship(request, template_name):
 @login_required
 def attack_relationship_data(request, name):
     """
-    relationship 数据
+    关系页面datatables数据
     """
     print(name)
     data = {'data': showRelationships(name)}
@@ -760,7 +761,7 @@ def attack_relationship_data(request, name):
 @login_required
 def attack_relationship_create(request):
     """
-    relationship 创建
+    新建节点关系
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -776,10 +777,12 @@ def attack_relationship_create(request):
         direction_left = form_dic.get('direction_left', None)
         node1 = {"name": node1_str}
         node2 = {"name": node2_str}
+        # 关系属性名和属性值
         if attribute_name and attribute_value:
             relation_properties = {attribute_name: attribute_value}
         else:
             relation_properties = None
+        # 关系指向
         if direction_left:
             relation_direction = False
         else:
@@ -807,7 +810,7 @@ def attack_relationship_create(request):
 @login_required
 def attack_relationship_edit(request):
     """
-    relationship 修改
+    关系修改
     """
     if request.method != "POST":
         return ajax_error("请求方式错误")
@@ -823,7 +826,6 @@ def attack_relationship_edit(request):
         node1 = {"name": node1_str}
         node2 = {"name": node2_str}
 
-        print(node1_label, node1, node2_label, node2, rel, new_rel)
         modifyRelationship(node1_label, node1, node2_label, node2, rel, new_rel)
 
         return ajax_success()
@@ -834,7 +836,7 @@ def attack_relationship_edit(request):
 @login_required
 def attack_relationship_delete(request, id):
     """
-    relationship 删除
+    关系删除
     """
     try:
         """
@@ -862,9 +864,10 @@ def attack_relationship_delete(request, id):
 @login_required
 def attack_relationship_get_node(request, name):
     """
-    relationship 根据 label_type 查询数据
+    关系 根据标签查询数据
     """
     try:
+        # 只查询名称 数据为列表
         res = searchNode(name, only_show=True)
         return ajax_success(data=res)
     except Exception as e:

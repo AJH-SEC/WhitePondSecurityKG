@@ -273,6 +273,7 @@
 </script>
 //datatables
 <script>
+    // 点击详情时的数据
     function format(d) {
         //详情
         return (
@@ -303,7 +304,7 @@
         "lengthChange": false,
         "autoWidth": true,
         "dom": 'Bfrtip',
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"], // 导出的数据格式
         "pageLength": 15,//每页显示数据
         "bProcessing": true, //显示数据加载中\
         ajax: '/rule/target/data/',
@@ -315,6 +316,7 @@
             { data: 'techniques name' },
             { data: 'created' },
             {#{ data: 'last modified' },#}
+            // 操作相关
             {"data": null, "sClass": "center",
                         "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
                             var element = $(nTd).empty();
@@ -322,11 +324,11 @@
                             var ignore = $('<a href="javascript:;">忽略</a>');
                             var remove = $('<a href="javascript:;" class="btn btn-danger btn-sm remove111"> <i class="fas fa-trash"> </i>删除 </a>');
 
-
+                            // 添加相关的操作到页面
                             {#element.append(manage);#}
                             {#element.append(ignore);#}
                             element.append(remove);
-
+                            // 相关操作的触发
                             manage.on('click', function () {
                                 var con = confirm("是否确定处置？");
                                 if (con) {
@@ -375,7 +377,7 @@
                     }
         ],
     });
-        //查找
+        //查找触发
     $("#submit").on('click', function () {
         var log_value = document.getElementById("log value").value
         var techniques_id = document.getElementById("techniques id").value

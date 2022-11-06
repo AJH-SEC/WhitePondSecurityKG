@@ -14,8 +14,10 @@ class NodeLabel:
     DATASOURCECOMPONENT = 'DatasourceComponent'  # 数据组件
 
 
+# 非日志标签列表
 LABEL_LIST = ['SubTechniques', 'Techniques', 'Tactics', 'Datasource', 'DatasourceComponent', 'Software', 'Groups',
                    'Mitigations', 'Citations', 'Campaign', 'NET_ASSERT', 'Rule']
 
+# attack标签列表
 ATTACK_LABEL_LIST = ['SubTechniques', 'Techniques', 'Tactics', 'Datasource', 'DatasourceComponent', 'Software', 'Groups',
-                   'Mitigations', 'Citations', 'Campaign']
+                   'Mitigations', 'Campaign']

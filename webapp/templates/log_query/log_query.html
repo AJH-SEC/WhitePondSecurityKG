@@ -187,6 +187,7 @@
 </script>
 //datatables
 <script>
+    //  点击详情展示的数据
     function format(d) {
         //详情
         var tr_td = ''
@@ -215,7 +216,7 @@
         "ordering": false,
         "autoWidth": true,
         "dom": 'Bfrtip',
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],// 导出的数据格式
         "pageLength": 15,//每页显示数据
         "bProcessing": true, //显示数据加载中\
         "sAjaxSource": '/logquery/query/data/',
@@ -301,15 +302,16 @@
                 "data": null,
                 "defaultContent": '<a class="btn btn-info btn-sm" href="#"> <i class="fas"> </i>查看 </a>',
             },
+            // 操作相关
             {"data": null, "sClass": "center",
                         "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
                             var element = $(nTd).empty();
                             var manage = $('<a href="javascript:;">处置&nbsp&nbsp&nbsp&nbsp</a>');
                             var ignore = $('<a href="javascript:;">忽略</a>');
-
+                            // 添加相关的操作到页面
                             element.append(manage);
                             element.append(ignore);
-
+                            // 相关操作的触发
                             manage.on('click', function () {
                                 var con = confirm("是否确定处置？");
                                 if (con) {
@@ -343,7 +345,7 @@
                     }
         ],
     });
-    // Add event listener for opening and closing details
+    // 详情触发
     $('#example tbody').on('click', 'td.dt-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row(tr);

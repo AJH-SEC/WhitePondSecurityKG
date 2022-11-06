@@ -24,8 +24,14 @@ def log_query(request, template_name):
 @login_required
 def log_query_data(request):
     """
-    log_query 数据
+    log_query datatables展示的数据
+    aodata 开启服务端模式后datatables提交的数据
+    sEcho 数据加载次数
+    iDisplayStart 数据起始位置
+    iDisplayLength 请求数据量
+    recordsTotal、recordsFiltered 数据总数
     """
+    # 开启服务端模式后datatables提交的数据
     aodata = request.GET.get('aodata')
     aodata = json.loads(aodata)
     ao_search = {}
@@ -38,12 +44,14 @@ def log_query_data(request):
             ao_search = ao.get('value', None)
             reservationtime_str = ao_search.get('reservationtime')
             event__type = ao_search.get('event__type')
+            # 时间格式转换
             if reservationtime_str:
                 start, end = reservationtime_str.split(' - ')
                 start = datetime.strptime(start, '%m/%d/%Y %I:%M %p').strftime('%Y-%m-%dT%H:%M:%S.000Z')
                 end = datetime.strptime(end, '%m/%d/%Y %I:%M %p').strftime('%Y-%m-%dT%H:%M:%S.000Z')
                 reservationtime_str1 = (' - ').join([start, end])
                 ao_search.update(reservationtime=reservationtime_str1)
+            # 数据格式转换，将字符串转换成列表
             if event__type:
                 event__type = ast.literal_eval(event__type)
                 ao_search.update(event__type=event__type)
@@ -93,6 +101,7 @@ def log_query_operation(request):
         mlsec = now.strftime('%Y-%m-%d %I:%M:%S.%f').split('.')[1][:3]
         now_str = now.strftime('%Y-%m-%dT%I:%M:%S.{}Z'.format(mlsec))
         dic.update({'last modified': now_str})
+        # 设置处置或者未处置操作
         add_property({"name": name}, dic)
         return ajax_success()
     except Exception as e:

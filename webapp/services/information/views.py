@@ -22,8 +22,13 @@ def information(request, template_name):
 @login_required
 def information_data(request):
     """
-    information 数据
+    information datatables展示的数据
+    sEcho 数据加载次数
+    iDisplayStart 数据起始位置
+    iDisplayLength 请求数据量
+    recordsTotal、recordsFiltered 数据总数
     """
+    # 开启服务端模式后datatables提交的数据
     aodata = request.GET.get('aodata')
     aodata = json.loads(aodata)
     ao_search = {}
@@ -42,9 +47,7 @@ def information_data(request):
             sEcho = ao.get('value', None)
     # 存在查询条件则按照条件查询
     if ao_search:
-        print(ao_search)
         all_node, info_count = information_search(ao_search, iDisplayStart, iDisplayLength)
-        print(all_node)
     else:
         all_node, info_count = information_show(iDisplayStart, iDisplayLength)
     res1 = {"draw": sEcho, "data": all_node, "recordsFiltered": info_count, "recordsTotal": info_count}
@@ -69,7 +72,7 @@ def information_create(request):
         data = json.dumps(res)
         return HttpResponse(data)
     except Exception as e:
-        return ajax_error("查找失败")
+        return ajax_error("创建失败")
 
 
 @login_required

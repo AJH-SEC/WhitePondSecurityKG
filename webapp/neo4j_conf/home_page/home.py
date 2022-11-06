@@ -53,15 +53,18 @@ def show_hit_branch(node_label: str, node_property: str):
         query = f"""MATCH p=(log)-[r:`log hit rule`]->(rule)-[]-(n:Techniques) where n.tactics='{property}' 
         return COUNT(n) AS count"""
         node_info = graph.run(query).data()
-        for text in node_info:
-            info_list.append(text['count'])
+        if node_info:
+            for text in node_info:
+                info_list.append(text['count'])
+        else:
+            info_list.append(0)
     sum_tactic = sum(info_list)
     proportion_list = []
     for info in info_list:
-        if sum_tactic == 0:
-            p = 0
-        else:
+        if sum_tactic:
             p = (info * 100) // sum_tactic
+        else:
+            p = 0
         proportion_list.append(p)
-    return proportion_list
+    return proportion_list, properties_list
 

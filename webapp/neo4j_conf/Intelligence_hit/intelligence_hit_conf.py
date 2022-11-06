@@ -17,51 +17,38 @@ def information_show(iDisplayStart: int, iDisplayLength: int):
     @return:
     """
 
-    query_num = f"""MATCH (rule:`Rule`)<-[rel_2]-(log)
-                    WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {LABEL_LIST})
-                    RETURN COUNT(DISTINCT log) AS count
-                 """
-    query_groups = f"""MATCH (g)-[rel_0]->(tech)<-[rel_1]-(rule:`Rule`)<-[rel_2:`log hit rule`]-(log)
-                       WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {LABEL_LIST})
-                       AND ANY(label_2 IN LABELS(g) WHERE label_2 IN ['Groups'])
-                       RETURN COLLECT(DISTINCT g.name) AS group, log.`name` AS log, 
-                              log.event__start AS event__start,
-                              log.type AS type, tech.name AS techniques, log.operation AS operation
-                       SKIP {iDisplayStart} LIMIT {iDisplayLength}"""
+    query_start = f"""MATCH (g:`Groups`)-[]->(t)<-[]-(r)<-[rel:`log hit rule`]-(log)
+                      WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {LABEL_LIST})
+                      MATCH (g)-[:uses]->(tech)
+                      WHERE ANY(label_t IN LABELS(tech) WHERE label_t IN ['SubTechniques', 'Techniques'])
+                      MATCH (g)-[:uses]->(s:Software)
+                      MATCH (tt)<-[]-(rr)<-[rel:`log hit rule`]-()
+                    """
+    query_num = f"""RETURN COUNT(DISTINCT g.name) AS num"""
+    query_end = f"""RETURN DISTINCT g.name AS group, COLLECT(DISTINCT s.name) AS software,
+                    COLLECT(DISTINCT tt.name) AS hit_techniques,
+                    COLLECT(DISTINCT tech.name) AS group_techniques,
+                    COUNT(DISTINCT tech.name) AS group_techniques_num, 
+                    COUNT(DISTINCT tt.name) AS hit_techniques_num
+                    SKIP {iDisplayStart} LIMIT {iDisplayLength}"""
 
-    query_software = f"""MATCH (s)-[rel_0]->(tech)<-[rel_1]-(rule:`Rule`)<-[rel_2:`log hit rule`]-(log)
-                         WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {LABEL_LIST})
-                         AND ANY(label_2 IN LABELS(s) WHERE label_2 IN ['Software'])
-                         RETURN COLLECT(DISTINCT s.name) AS software, log.`name` AS log, 
-                                log.event__start AS event__start,
-                                log.type AS type, tech.name AS techniques, log.operation AS operation
-                         SKIP {iDisplayStart} LIMIT {iDisplayLength}"""
-
-    info_groups = graph.run(query_groups).data()
-    info_software = graph.run(query_software).data()
-    info_num = graph.run(query_num).data()
+    query_info = query_start + query_end
+    query_number = query_start + query_num
+    info = graph.run(query_info).data()
+    info_num = graph.run(query_number).data()[0]
+    number = info_num['num']
     info_list = []
-    info_number = []
-
-    for g, s in zip(info_groups, info_software):
+    for text in info:
         every_info = {}
-        every_info.update({'log': g['log']})
-        every_info.update({'type': g['type']})
-        every_info.update({'event__start': g['event__start']})
-        if g['operation'] == None:
-            every_info.update({'operation': ''})
-        else:
-            every_info.update({'operation': g['operation']})
-        every_info.update({'techniques': g['techniques']})
-        every_info.update({'group': ",".join(g['group'])})
-        every_info.update({'software': ",".join(s['software'])})
+        every_info.update({'group': text['group']})
+        every_info.update({'software': ",".join(text['software'])})
+        every_info.update({'hit_techniques': ",".join(text['hit_techniques'])})
+        every_info.update({'group_techniques': ",".join(text['group_techniques'])})
+        every_info.update({'group_all_techniques_number': text['group_techniques_num']})               # 此组织下的所有技术
+        every_info.update({'group_hit_techniques_number': text['hit_techniques_num']})                 # 此组织目前命中技术
+        every_info.update({'hit_percentage': str(text['hit_techniques_num']) + '/' + str(text['group_techniques_num'])})
         info_list.append(every_info)
-    # print(json.dumps(info_list, indent=4))
-    for text in info_num:
-        info_number.append(text['count'])
-
-    return info_list, sum(info_number)
-
+    return info_list, number
 
 def information_search(node_properties: dict, iDisplayStart: int, iDisplayLength: int):
     """
@@ -72,75 +59,45 @@ def information_search(node_properties: dict, iDisplayStart: int, iDisplayLength
     @return:
     """
 
-    query_start = f"""MATCH (gs)-[rel_0]->(tech)<-[rel_1]-(rule:`Rule`)<-[rel_2]-(log)
-                       WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {LABEL_LIST})
+    query_start = f"""MATCH (g:`Groups` {'{name:"' + list(node_properties.values())[0] +'"}'})-[]->(t)<-[]-(r)<-[rel:`log hit rule`]-(log)
+                      WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {LABEL_LIST})
+                      MATCH (g)-[:uses]->(tech)
+                      WHERE ANY(label_t IN LABELS(tech) WHERE label_t IN ['SubTechniques', 'Techniques'])
+                      MATCH (g)-[:uses]->(s:Software)
+                      MATCH (tt)<-[]-(rr)<-[rel:`log hit rule`]-()
                     """
-    query_end = f"""WITH log
-                    MATCH (log)-[]->(ru:Rule)-[]->(t)<-[]-(gg:Groups)
-                    MATCH (log)-[]->(ru:Rule)-[]->(t)<-[]-(ss:Software)
-                    RETURN COLLECT(DISTINCT gg.name) AS group, COLLECT(DISTINCT ss.name) AS software,
-                           log.`name` AS log, log.type AS type,
-                           t.name AS techniques, log.operation AS operation
+    query_num = f"""RETURN COUNT(DISTINCT g.name) AS num"""
+    query_end = f"""RETURN DISTINCT g.name AS group, COLLECT(DISTINCT s.name) AS software,
+                    COLLECT(DISTINCT tt.name) AS hit_techniques,
+                    COLLECT(DISTINCT tech.name) AS group_techniques,
+                    COUNT(DISTINCT tech.name) AS group_techniques_num, 
+                    COUNT(DISTINCT tt.name) AS hit_techniques_num
                     SKIP {iDisplayStart} LIMIT {iDisplayLength}"""
-    # query_num = f"""MATCH (rule:`Rule`)<-[rel_2]-(log)
-    #                 WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {label_list})
-    #                 RETURN COUNT(DISTINCT log) AS count
-    #              """
-    query_end_num = f"""RETURN COUNT(DISTINCT log) AS count"""
 
-    if node_properties.get('name'):
-        log_value = f"""AND log.`name`="{node_properties.get('name')}" """
-        query_start = query_start + log_value
-
-    if node_properties.get('type'):
-        log_type = f"""AND log.type="{node_properties.get('type')}" """
-        query_start = query_start + log_type
-
-    if node_properties.get('techniques'):
-        techniques = f"""AND tech.name="{node_properties.get('techniques')}" """
-        query_start = query_start + techniques
-
-    if node_properties.get('group_or_software'):
-        group = f"""AND gs.name="{node_properties.get('group_or_software')}" """
-        query_start = query_start + group
-
-    query = query_start + query_end
-    query_num = query_start + query_end_num
-    # print(query)
-    info = graph.run(query).data()
-    info_num = graph.run(query_num).data()
-
+    query_info = query_start + query_end
+    query_number = query_start + query_num
+    info = graph.run(query_info).data()
+    info_num = graph.run(query_number).data()[0]
+    number = info_num['num']
     info_list = []
-    info_number = []
     for text in info:
         every_info = {}
-        every_info.update({'log': text['log']})
-        every_info.update({'type': text['type']})
-        if text['operation'] == None:
-            every_info.update({'operation': ''})
-        else:
-            every_info.update({'operation': text['operation']})
-        every_info.update({'techniques': text['techniques']})
-        every_info.update({'group': ",".join(text['group'])})
+        every_info.update({'group': text['group']})
         every_info.update({'software': ",".join(text['software'])})
+        every_info.update({'hit_techniques': ",".join(text['hit_techniques'])})
+        every_info.update({'group_techniques': ",".join(text['group_techniques'])})
+        every_info.update({'group_all_techniques_number': text['group_techniques_num']})               # 此组织下的所有技术
+        every_info.update({'group_hit_techniques_number': text['hit_techniques_num']})                # 此组织目前命中技术
+        every_info.update({'hit_percentage': str(text['hit_techniques_num']) +'/'  + str(text['group_techniques_num'])})
         info_list.append(every_info)
-    for text in info_num:
-        info_number.append(text['count'])
+    return info_list, number
 
-    # print(info_list)
-    # print(json.dumps(info_list, indent=4))
-    return info_list, sum(info_number)
 
 if __name__ == '__main__':
-    # print(information_show(0, 15))
-    information_search({
-        "log": "c3f70729-6c65-4874-b521-f9d8d2220866",
-        "type": "http",
-        "operation": "",
-        "techniques": "Multi-Factor Authentication Interception",
-        # "group_or_software": "Operation Wocao,Kimsuky,Chimera",
-        "group_or_software": "Sykipot"
-    }, 0, 15)
+    print(information_show(0, 15))
+    # information_search({'name': 'HEXANE'}, 0, 15)
+
+
 
 
 

@@ -37,18 +37,18 @@
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group row" style="text-align: center; font-size:14px;">
-                                            <label class="col-sm-1 col-form-label">日志编号</label>
+                                            <label class="col-sm-1 col-form-label">组织</label>
                                             <div class="col-sm-3" style="text-align: center">
-                                              <input type="text" class="form-control" id="name" name="name" placeholder="请输入日志编号">
+                                              <input type="text" class="form-control" id="group" name="group" placeholder="请输入组织">
                                             </div>
-                                            <label class="col-sm-1 col-form-label">技术</label>
-                                            <div class="col-sm-3" style="text-align: center">
-                                              <input type="text" class="form-control" id="techniques" name="techniques" placeholder="请输入技术类型">
-                                            </div>
-                                            <label class="col-sm-1 col-form-label">组织或软件</label>
-                                            <div class="col-sm-3" style="text-align: center">
-                                              <input type="text" class="form-control" id="group_or_software" name="group_or_software" placeholder="请输入组织或软件类型">
-                                            </div>
+{#                                            <label class="col-sm-1 col-form-label">技术</label>#}
+{#                                            <div class="col-sm-3" style="text-align: center">#}
+{#                                              <input type="text" class="form-control" id="techniques" name="techniques" placeholder="请输入技术类型">#}
+{#                                            </div>#}
+{#                                            <label class="col-sm-1 col-form-label">软件</label>#}
+{#                                            <div class="col-sm-3" style="text-align: center">#}
+{#                                              <input type="text" class="form-control" id="software" name="software" placeholder="请输入组织或软件类型">#}
+{#                                            </div>#}
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -257,6 +257,7 @@
 </script>
 //datatables
 <script>
+    //  点击详情展示的数据
     function format(d) {
         //详情
         var tr_td = ''
@@ -310,22 +311,22 @@
         "ordering": false,
         "autoWidth": true,
         "dom": 'Bfrtip',
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"], // 导出的数据格式
         "pageLength": 15,//每页显示数据
         "bProcessing": true, //显示数据加载中\
         "createdRow": function( row, data, dataIndex ) {
-           if(data.techniques.length > remarkShowLength){//只有超长，才有td点击事件
-              $(row).children('td').eq(4).attr('ondblclick','javascript:changeShowRemarks(this);');
+           if(data.hit_techniques.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(2).attr('ondblclick','javascript:changeShowRemarks(this);');
            }
-           if(data.group.length > remarkShowLength){//只有超长，才有td点击事件
-              $(row).children('td').eq(5).attr('ondblclick','javascript:changeShowRemarks(this);');
+           if(data.group_techniques.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(3).attr('ondblclick','javascript:changeShowRemarks(this);');
            }
            if(data.software.length > remarkShowLength){//只有超长，才有td点击事件
-              $(row).children('td').eq(6).attr('ondblclick','javascript:changeShowRemarks(this);');
+              $(row).children('td').eq(4).attr('ondblclick','javascript:changeShowRemarks(this);');
            }
-           $(row).children('td').eq(4).attr('content',data.techniques);
-           $(row).children('td').eq(5).attr('content',data.group);
-           $(row).children('td').eq(6).attr('content',data.software);
+           $(row).children('td').eq(2).attr('content',data.hit_techniques.split(',').join("<br>"));
+           $(row).children('td').eq(3).attr('content',data.group_techniques.split(',').join("<br>"));
+           $(row).children('td').eq(4).attr('content',data.software.split(',').join("<br>"));
          },
         {#ajax: '/information/target/data/',#}
         "sAjaxSource": '/information/target/data/',
@@ -334,19 +335,19 @@
             // 点击过搜索后每次datatables数据变动都会读取过滤参数
             var customSwitch1 = document.getElementById("customSwitch1").checked
             if (customSwitch1){
-                var name = document.getElementById("name").value
-                var techniques = document.getElementById("techniques").value
-                var group_or_software = document.getElementById("group_or_software").value
+                var group = document.getElementById("group").value
+                {#var techniques = document.getElementById("techniques").value#}
+                {#var software = document.getElementById("software").value#}
                 var search = {}
-                if (name){
-                    search['name'] = name
+                if (group){
+                    search['group'] = group
                 }
-                if (techniques){
-                    search['techniques'] = techniques
-                }
-                if (group_or_software){
-                    search['group_or_software'] = group_or_software
-                }
+                {#if (techniques){#}
+                {#    search['techniques'] = techniques#}
+                {# }#}
+                {#if (software){#}
+                {#    search['software'] = software#}
+                {# }#}
                 aoData.push({'name': 'search', 'state': customSwitch1, 'value': search})
             }
             $.ajax( {
@@ -360,55 +361,39 @@
             });
          },
         columns: [
-            { data: 'log',title:'日志编号' },
-            { data: 'type',title:'日志类型' ,
-                "defaultContent": ""
-            },
-            {data: "operation",title:'处置状态',
-                "defaultContent": "未处置",
-                "fnCreatedCell":function(nTd, sData, oData, iRow, iCol){
-                    var element = $(nTd).empty();
-                     if (sData == 'handle') {
-                         element.append("处置")
-                     }
-                     else if (sData == 'ignore') {
-                         element.append("忽略")
-                     }
-                     else{
-                         element.append('未处置')
-                     }
-             }
-            },
-            { data: 'event__start',title:'日志创建时间',
-                "defaultContent": ""
-            },
-            { data: 'techniques',title:'技术',
-                "defaultContent": "",
-                "render": function (data, type, full, meta) {
-                    if (full.techniques.length > remarkShowLength) {
-                     return getPartialRemarksHtml(full.techniques);//显示部分信息
-                    } else {
-                        return full.techniques;//显示原始全部信息
-                        }
-                    }
-            },
             { data: 'group',title:'组织',
+                "defaultContent": ""
+            },
+            { data: 'hit_percentage',title:'技术命中占比',
+                "defaultContent": ""
+            },
+            { data: 'hit_techniques',title:'已命中技术',
                 "defaultContent": "",
                 "render": function (data, type, full, meta) {
-                    if (full.group.length > remarkShowLength) {
-                     return getPartialRemarksHtml(full.group);//显示部分信息
+                    if (full.hit_techniques.length > remarkShowLength) {
+                     return getPartialRemarksHtml(full.hit_techniques.split(',').join("<br>"));//显示部分信息
                     } else {
-                        return full.group;//显示原始全部信息
+                        return full.hit_techniques.split(',').join("<br>");//显示原始全部信息
                         }
                     }
             },
-            { data: 'software',title:'软件',
+            { data: 'group_techniques',title:'组织下所有技术',
+                "defaultContent": "",
+                "render": function (data, type, full, meta) {
+                    if (full.group_techniques.length > remarkShowLength) {
+                     return getPartialRemarksHtml(full.group_techniques.split(',').join("<br>"));//显示部分信息
+                    } else {
+                        return full.group_techniques.split(',').join("<br>");//显示原始全部信息
+                        }
+                    }
+            },
+            { data: 'software',title:'组织下所有软件',
                 "defaultContent": "",
                 "render": function (data, type, full, meta) {
                     if (full.software.length > remarkShowLength) {
-                     return getPartialRemarksHtml(full.software);//显示部分信息
+                     return getPartialRemarksHtml(full.software.split(',').join("<br>"));//显示部分信息
                     } else {
-                        return full.software;//显示原始全部信息
+                        return full.software.split(',').join("<br>");//显示原始全部信息
                         }
                     }
             },
@@ -445,9 +430,9 @@
      });
     //重置按钮
     $("#reset").on('click', function () {
-        document.getElementById("name").value='';
-        document.getElementById("techniques").value='';
-        document.getElementById("group_or_software").value='';
+        document.getElementById("group").value='';
+        {#document.getElementById("techniques").value='';#}
+        {#document.getElementById("software").value='';#}
     });
 
     //防止重载

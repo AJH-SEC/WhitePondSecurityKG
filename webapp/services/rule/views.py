@@ -25,7 +25,7 @@ def rule_target(request, template_name):
 @login_required
 def rule_target_data(request):
     """
-    rule_target 数据
+    rule_target datatables展示的数据
     """
     node_label = 'Rule'
     data = {'data': show_rule(node_label)}
@@ -76,7 +76,7 @@ def rule_target_delete(request):
         delete_rule(node_label, {'log value': logvalue})
         return ajax_success()
     except Exception as e:
-        return ajax_error("查找失败")
+        return ajax_error("删除失败")
 
 
 @login_required

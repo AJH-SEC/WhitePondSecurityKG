@@ -156,8 +156,10 @@ def home_data_radar(request):
     """
     try:
         node_property = 'name'
-        tactics = show_node_property_value(NodeLabel.TACTICS, node_property)
-        proportion = show_hit_branch(NodeLabel.TACTICS, node_property)
+        # # 战术标签列表
+        # tactics = show_node_property_value(NodeLabel.TACTICS, node_property)
+        # 命中规则在战术中的分布雷达图占比数据
+        proportion, tactics = show_hit_branch(NodeLabel.TACTICS, node_property)
         data = {'tactics': tactics, 'proportion': proportion}
         return ajax_success(data=data)
     except Exception as e:

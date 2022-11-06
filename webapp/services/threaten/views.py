@@ -24,7 +24,11 @@ def threaten(request, template_name):
 @login_required
 def threaten_data(request):
     """
-    threaten 数据
+    threaten datatables展示的数据
+    sEcho 数据加载次数
+    iDisplayStart 数据起始位置
+    iDisplayLength 请求数据量
+    recordsTotal、recordsFiltered 数据总数
     """
     aodata = request.GET.get('aodata')
     aodata = json.loads(aodata)
@@ -70,7 +74,7 @@ def threaten_create(request):
         data = json.dumps(res)
         return HttpResponse(data)
     except Exception as e:
-        return ajax_error("查找失败")
+        return ajax_error("创建失败")
 
 
 @login_required
