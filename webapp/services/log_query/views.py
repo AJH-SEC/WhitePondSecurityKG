@@ -96,13 +96,13 @@ def log_query_operation(request):
     """
     try:
         dic = request.GET.dict()
-        name = dic.pop('name')
+        log_id = dic.pop('log_id')
         now = datetime.now()
         mlsec = now.strftime('%Y-%m-%d %I:%M:%S.%f').split('.')[1][:3]
         now_str = now.strftime('%Y-%m-%dT%I:%M:%S.{}Z'.format(mlsec))
         dic.update({'last modified': now_str})
         # 设置处置或者未处置操作
-        add_property({"name": name}, dic)
+        add_property({"log_id": log_id}, dic)
         return ajax_success()
     except Exception as e:
 

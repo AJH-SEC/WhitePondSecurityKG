@@ -1,15 +1,17 @@
-from ast import arg
-import json
 from interface.deal_log_interface import DealLogInterface
 from util.recv_log import ReadLogDataByKafka
 from model.govern_attck_log.wazuhrlog import Wazhur_Log
 from model.govern_attck_log.Normallog import Common_Log
+from datasource.enum import NormalBeatsDealEnum
+from util.util import trans_time_zone
 
 from platform import node
 from numpy import source
 import datetime
 import logging
 import threading
+import json
+import uuid
 
 
 # 处理wazuh告警日志
@@ -90,16 +92,59 @@ class RecvNormalLog(DealLogInterface):
         param topic_name: kafka主题名称, str
         '''
         try:
-            # msg = msg.replace(r'\\', '\\').replace(r'\\', '').replace('+', '')
-            msg = json.loads(msg)
-            # self.normal_deal.agent_data(msg)
+            msg_dict = json.loads(msg)
             start_time = datetime.datetime.now()
             print("-------------------------start time:{}".format(datetime.datetime.now()))
+            # 老版本日志命中规则处理
             # self.normal_deal.Nercreate(msg, self.config_instance.get_beat_normal_config()["rule_dir"])
-            self.num += 1
-            print(self.num)
+            
+            # 新版本处理日志
+            key_value_map = {}
+            for key, val in msg_dict.items():
+                if "@" in key:
+                    key = key.replace("@", "")
+                key_value_map.update(self.recursion_map_value(val, key))
+
+            labels = [key_value_map["metadata__beat"], NormalBeatsDealEnum.NORMAL_LOG.value]
+            key_value_map[NormalBeatsDealEnum.LOG_ID.value] = key_value_map["metadata__beat"] + str(uuid.uuid4().hex)
+            key_value_map["name"] = key_value_map["metadata__beat"]
+            
+            # 修改时间字段  将时间调整为东八时区
+            key_value_map["event__start"] = trans_time_zone(key_value_map["timestamp"])
+            if "event__end" in key_value_map.keys():
+                key_value_map["event__end"] = trans_time_zone(key_value_map["event__end"])
+            
+            if "process__created" in key_value_map.keys():
+                key_value_map["process__created"] = trans_time_zone(key_value_map["process__created"])
+            
+            self.neo4j_db.add_node(key_value_map, labels)
+            self.neo4j_db.add_log_rule_relation(labels, key_value_map)
             print("-------------------------start_time : {} ,------------------stop time:{}".format(start_time, datetime.datetime.now()))
+
+
         except Exception as e:
-            print("load wazuh alert json data failed, massage:{}, err: {}\n".format(msg, e))
+            print("load beats failed, massage:{}, err: {}\n".format(msg, e))
         
         logging.debug("topic name is : {} , data: {}".format(topic_name, msg))
+
+
+    def recursion_map_value(self, map_value, pre_key):
+        '''
+        des : 递归字典转换为一维度字典
+        param msg: 输入的日志数据, dict
+        '''
+        key_value_map = {}
+        if type(map_value) == dict:
+            for key, value in map_value.items():
+                key = pre_key + "__" + key
+                if type(value) == type(dict()):
+                    dat_emp =self.recursion_map_value(value, key)
+                    key_value_map.update(dat_emp)
+                elif type(value) == type([]):
+                    key_value_map[key] = ",".join([i for i in value])
+                else:
+                    key_value_map[key] = value
+        else:
+            key = {pre_key: map_value}
+            key_value_map.update(key)
+        return key_value_map

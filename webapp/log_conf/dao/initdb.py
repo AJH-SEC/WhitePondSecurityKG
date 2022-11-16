@@ -6,6 +6,8 @@ from neo4j import unit_of_work
 from urllib3 import Retry
 import logging
 
+from datasource.enum import NormalBeatsDealEnum
+
 
 class Neo4jDb():
     _instance = None
@@ -155,10 +157,12 @@ class Neo4jDb():
             if kk in log_keys:
                 log_info_key = kk
                 log_info_value = log_map.get(kk)
+                log_id_value= log_map.get(NormalBeatsDealEnum.LOG_ID.value)
                 # print(log_info_key)
                 # print(log_info_value)
-                query = f"""MATCH (rule:`Rule`) WHERE rule.`log value`='{log_info_value}' AND rule.`log byte` IN {log_keys}
-                            MATCH (log:`{log_labels}`) WHERE log.`{log_info_key}`='{log_info_value}'
+                # TODO :是否为版本问题，修改以id方式进行查询日志
+                query = f"""MATCH (rule:Rule) WHERE rule.`log value`='{log_info_value}' AND rule.`log byte`='{log_info_key}'
+                            MATCH (log:{log_labels}) WHERE log.`{log_info_key}`='{log_info_value}' AND log.{NormalBeatsDealEnum.LOG_ID.value}='{log_id_value}'
                             MERGE (log)-[r:`log hit rule`""" + """{create:""" + f""" "{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}" """ + """}]->(rule)""" + f"""
                          """
                 with self.graph.session() as session:

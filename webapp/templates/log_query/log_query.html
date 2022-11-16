@@ -39,12 +39,12 @@
                                         <div class="form-group row" style="text-align: center; font-size:15px;">
                                             <label class="col-sm-1 col-form-label">日志编号</label>
                                             <div class="col-sm-3" style="text-align: center">
-                                              <input type="text" class="form-control" id="name" name="name" placeholder="请输入编号">
+                                              <input type="text" class="form-control" id="log_id" name="log_id" placeholder="请输入编号">
                                             </div>
-{#                                            <label class="col-sm-1 col-form-label">日志名称</label>#}
-{#                                            <div class="col-sm-3" style="text-align: center">#}
-{#                                              <input type="text" class="form-control" id="log_name" name="log_name" placeholder="请输入名称">#}
-{#                                            </div>#}
+                                            <label class="col-sm-1 col-form-label">日志名称</label>
+                                              <div class="col-sm-3" style="text-align: center">
+                                                <input type="text" class="form-control" id="name" name="name" placeholder="请输入名称">
+                                              </div>
                                             <label class="col-sm-1 col-form-label">日志类型</label>
                                             <div class="col-sm-3" style="text-align: center">
                                                 <select class="form-control select2" id="type" name="type" data-placeholder='选择类型' style="width: 100%;">
@@ -54,6 +54,9 @@
                                                     {% endfor %}
                                                 </select>
                                             </div>
+
+                                        </div>
+                                        <div class="form-group row" style="text-align: center; font-size:15px;">
                                             <label class="col-sm-1 col-form-label">处置状态</label>
                                             <div class="col-sm-3" style="text-align: center">
                                                 <select class="form-control select2" name="operation" id="operation" data-placeholder='选择类型' style="width: 100%;">
@@ -63,8 +66,6 @@
                                                     <option value="unhandled">未处置</option>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div class="form-group row" style="text-align: center; font-size:15px;">
                                             <label class="col-sm-1 col-form-label">事件类型</label>
                                             <div class="col-sm-3" style="text-align: center">
                                               <select class="form-control select2" name="event__type" id="event__type" data-placeholder='选择类型' style="width: 100%;">
@@ -226,6 +227,7 @@
             var customSwitch1 = document.getElementById("customSwitch1").checked
             if (customSwitch1){
                 {#var log_number = document.getElementById("log_number").value#}
+                var log_id = document.getElementById("log_id").value
                 var name = document.getElementById("name").value
                 var type = document.getElementById("type").value
                 var event__type = document.getElementById("event__type").value
@@ -235,6 +237,9 @@
                 {#if (log_number) {#}
                 {#    search['log_number'] = log_number#}
                 {# }#}
+                if (log_id){
+                    search['log_id'] = log_id
+                }
                 if (name){
                     search['name'] = name
                 }
@@ -252,6 +257,10 @@
                 }
                 aoData.push({'name': 'search', 'state': customSwitch1, 'value': search})
             }
+            if (search != null) {
+                console.log(log_id)
+            }
+            
             $.ajax( {
                 'type' : 'get',
                 "url": sSource,
@@ -264,7 +273,7 @@
          },
         {#ajax: '/logquery/query/data/',#}
         columns: [
-            { data: 'name' },
+            { data: 'log_id' },
             { data: 'name' },
             { data: 'type' ,
                 "defaultContent": ""
@@ -315,7 +324,7 @@
                             manage.on('click', function () {
                                 var con = confirm("是否确定处置？");
                                 if (con) {
-                                    var params = {'operation': 'handle', 'name': oData["name"]}
+                                    var params = {'operation': 'handle', 'log_id': oData["log_id"]}
                                     $.get("/logquery/query/operation/", params, function (data) {
                                         if (data.success) {
                                             $.growlService("处置操作成功！", {type: "success"});
@@ -330,7 +339,7 @@
                             ignore.on('click', function () {
                                 var con = confirm("是否确定忽略？");
                                 if (con) {
-                                    var params = {'operation': 'ignore', 'name': oData["name"]}
+                                    var params = {'operation': 'ignore', 'log_id': oData["log_id"]}
                                     $.get("/logquery/query/operation/", params, function (data) {
                                         if (data.success) {
                                             $.growlService("忽略操作成功", {type: "success"});
@@ -360,6 +369,19 @@
             tr.addClass('shown');
         }
     });
+
+    function formatDate(timeStr) {
+        var date = new Date(timeStr)
+        const Y = date.getFullYear() + '年'
+        const M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '-' : date.getMonth() + 1 + '月'
+        const D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + '日 '
+        const h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':'
+        const m = date.getMinutes() < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':'
+        const s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+        return Y + M + D + h + m + s
+    }
+
+
     //查找 开启服务端模式后此处只提供重载功能
     $("#submit").on('click', function () {
         document.all.customSwitch1.checked=true
@@ -402,6 +424,7 @@
     $("#reset").on('click', function () {
         document.all.customSwitch1.checked=false
         {#document.getElementById("log_number").value='';#}
+        document.getElementById("log_id").value='';
         document.getElementById("name").value='';
         document.getElementById("type").value='';
         document.getElementById("event__type").value='';

@@ -1,7 +1,13 @@
 from util.read_config import ConfigInstance
+from common.myasync import run_task, main_run_task
+from common.mythresd import deal_thread, deal_thread_async, start_thread_fuc,start_thread_pool
+from common.mymultiprocessing import deal_process
 from kafka import KafkaConsumer,KafkaProducer
 import logging
-
+import datetime
+import threading
+import asyncio
+import time
 
 class ReadLogDataByKafka:
     
@@ -43,12 +49,25 @@ class ReadLogDataByKafka:
         '''
         param callback: 消息处理回调函数, func
         '''
-        for message in self.consumer:
-            data = message.value.decode()
-            topic_name = message.topic
-            logging.debug("recv topic name {}, data: {}".format(topic_name, data))
-            print(("recv topic name {}, data: {}".format(topic_name, data)))
-            callback(data, topic_name)
+        start_time = time.perf_counter()
+        print("开始运行：", start_time)
+        # asyncio.run(run_task(self.consumer, callback))
+        # asyncio.run(main_run_task(self.consumer, callback))
+        # deal_thread(self.consumer, callback)
+        # deal_process(self.consumer, callback)
+        # deal_thread_async(self.consumer, callback)
+        # start_thread_fuc(self.consumer, callback)
+        start_thread_pool(self.consumer, callback)
+        print("代码运行时间为：", time.perf_counter() - start_time)
+
+        # for message in self.consumer:
+        #     data = message.value.decode()
+        #     topic_name = message.topic
+        #     logging.debug("recv topic name {}, data: {}".format(topic_name, data))
+        #     print(("recv topic name {}, data: {}".format(topic_name, data, datetime.datetime.now())))
+
+        #     threading.Thread(target=callback, args=(data, topic_name))
+        #     callback(data, topic_name)
 
     # 向topic写入数据
     def send_data_to_product(self, data):

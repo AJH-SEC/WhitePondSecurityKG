@@ -1,6 +1,8 @@
 from util.recv_log import ReadLogDataByKafka
+from util.util import trans_time_zone
 from datasource.packetbeat_data import PacketBeatData
 from interface.deal_log_interface import DealLogInterface
+
 
 import logging
 import json
@@ -32,7 +34,9 @@ class RecvNet(DealLogInterface):
         packet_beat_data = PacketBeatData(self.config_file_name)
         list_type = packet_beat_data.get_type_list()
         if json_data["type"] in list_type:
-            self.deal_packetbeat_currency(json_data, packet_beat_data) 
+            self.deal_packetbeat_currency(json_data, packet_beat_data)
+        
+        return
     
     # 通用packetbeat处理函数
     def deal_packetbeat_currency(self, json_data, packet_beat_data):
@@ -72,7 +76,12 @@ class RecvNet(DealLogInterface):
                                 key_son = feild_name + "__" +attr_value
                                 key_value_map.update(self.recursion_map_value(value, key_son))  
                     
-            key_value_map = self.add_name_attr(node_name, key_value_map)
+            key_value_map = self.add_name_attr(key_value_map["agent__type"], key_value_map)
+            key_value_map["log_id"] = node_name
+            # 转换时间时区
+            key_value_map["event__start"] = trans_time_zone(key_value_map["event__start"])
+            key_value_map["event__end"] = trans_time_zone(key_value_map["event__end"])
+
             self.neo4j_db.add_node(key_value_map, data["if_node_labels"])
             self.neo4j_db.add_log_rule_relation(data['if_node_labels'], key_value_map)
 
@@ -102,12 +111,12 @@ class RecvNet(DealLogInterface):
                 if mach_val["is_num"]:
                     map_value = self.add_attr_num(map_value)
                 if mach_val["dircertion"] == "left":
-                    dest_map = {"name": node_name}
+                    dest_map = {"log_id": node_name}
                     self.neo4j_db.add_relationship(mach_val["source_node_labels"], map_value, mach_val["dest_node_labels"], dest_map,mach_val["rs_label"], map_value)
                 elif mach_val["dircertion"] == "right":
-                    source_map = {"name": node_name}
+                    source_map = {"log_id": node_name}
                     self.neo4j_db.add_relationship(mach_val["source_node_labels"], source_map, mach_val["dest_node_labels"], map_value,mach_val["rs_label"], map_value)
-
+        return
     def add_name_attr(self, name, map_value):
         '''
         param name: 节点name的值

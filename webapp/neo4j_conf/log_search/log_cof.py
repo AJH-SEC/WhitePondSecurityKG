@@ -82,6 +82,9 @@ def search_node(node_property: dict,
     query_end = f"""RETURN PROPERTIES(n) as property SKIP {iDisplayStart} LIMIT {iDisplayLength}"""
     query_end_count = f"""RETURN COUNT(n) AS count"""
 
+    if node_property.get('log_id'):
+        name_str = f"""AND n.log_id = "{node_property.get('log_id')}" """
+        query_start = query_start + name_str
     if node_property.get('name'):
         name_str = f"""AND n.name = "{node_property.get('name')}" """
         query_start = query_start + name_str
