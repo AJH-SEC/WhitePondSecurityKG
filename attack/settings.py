@@ -115,12 +115,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+# session 超时时间 30分钟
+SESSION_COOKIE_AGE=60*60
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "webapp/static")
 STATIC_URL = '/static/'
 # neo4j 数据库地址 登录用户名以及密码
-NEO4J_URL = "neo4j://localhost:7687"
-NEO4J_USER = 'test'
-NEO4J_PASSWORD = 'test'
+NEO4J_URL = "neo4j://192.168.1.100:7687"
+NEO4J_USER = 'neo4j'
+NEO4J_PASSWORD = 'sgcc.com'

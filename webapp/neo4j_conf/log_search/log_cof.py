@@ -79,7 +79,7 @@ def search_node(node_property: dict,
     #                'DatasourceComponent', 'Software', 'Groups', 'Mitigations', 'Rule']
 
     query_start = f"""MATCH (n) WHERE NONE(l in LABELS(n) WHERE l IN {LABEL_LIST}) """
-    query_end = f"""RETURN PROPERTIES(n) as property SKIP {iDisplayStart} LIMIT {iDisplayLength}"""
+    query_end = f"""RETURN PROPERTIES(n) as property ORDER BY n.event__start DESC  SKIP {iDisplayStart} LIMIT {iDisplayLength} """
     query_end_count = f"""RETURN COUNT(n) AS count"""
 
     if node_property.get('log_id'):
