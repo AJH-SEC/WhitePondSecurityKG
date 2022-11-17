@@ -39,11 +39,11 @@
                                         <div class="form-group row" style="text-align: center; font-size:14px;">
                                             <label class="col-sm-1 col-form-label">日志字段值</label>
                                             <div class="col-sm-3" style="text-align: center">
-                                              <input type="text" class="form-control" id="log value" name="log value" placeholder="请输入日志字段值">
+                                              <input type="text" class="form-control" id="log_value" name="log_value" placeholder="请输入日志字段值">
                                             </div>
 {#                                            <label class="col-sm-2 col-form-label">技术ID</label>#}
 {#                                            <div class="col-sm-4" style="text-align: center">#}
-{#                                              <input type="text" class="form-control" id="techniques id" name="techniques id" placeholder="请输入技术ID">#}
+{#                                              <input type="text" class="form-control" id="techniques_id" name="techniques_id" placeholder="请输入技术ID">#}
 {#                                            </div>#}
                                             <label class="col-sm-1 col-form-label">日志类型</label>
                                             <div class="col-sm-3" style="text-align: center">
@@ -56,7 +56,7 @@
                                             </div>
                                             <label class="col-sm-1 col-form-label">攻击模式</label>
                                             <div class="col-sm-3" style="text-align: center">
-                                              <input type="text" class="form-control" id="attack model" name="attack model" placeholder="请输入攻击模式">
+                                              <input type="text" class="form-control" id="attack_model" name="attack_model" placeholder="请输入攻击模式">
                                             </div>
                                         </div>
                                     </div>
@@ -311,18 +311,18 @@
             // 点击过搜索后每次datatables数据变动都会读取过滤参数
             var customSwitch1 = document.getElementById("customSwitch1").checked
             if (customSwitch1){
-                var log_value = document.getElementById("log value").value
+                var log_value = document.getElementById("log_value").value
                 var type = document.getElementById("type").value
-                var attack_model = document.getElementById("attack model").value
+                var attack_model = document.getElementById("attack_model").value
                 var search = {}
                 if (log_value){
-                    search['log value'] = log_value
+                    search['log_value'] = log_value
                 }
                 if (type){
                     search['type'] = type
                 }
                 if (attack_model){
-                    search['attack model'] = attack_model
+                    search['attack_model'] = attack_model
                 }
                 aoData.push({'name': 'search', 'state': customSwitch1, 'value': search})
             }
@@ -360,7 +360,7 @@
             { data: 'event__start',title:'创建时间',
                 "defaultContent": ""
             },
-            { data: 'attack model',title:'攻击模式',
+            { data: 'attack_model',title:'攻击模式',
                 "defaultContent": ""
             },
             { title:'查看',
@@ -369,11 +369,11 @@
                 "data": null,
                 "defaultContent": '<a class="btn btn-info btn-sm" href="#"> <i class="fas"> </i>查看 </a>',
             },
-            {#{ data: 'log byte', title: '日志字段'},#}
-            {#{ data: 'log value', title: '日志字段值'},#}
-            {#{ data: 'attack model', title: '攻击模式'},#}
-            {#{ data: 'techniques id', title: '技术ID'},#}
-            {#{ data: 'techniques name', title: '技术名称'},#}
+            {#{ data: 'log_byte', title: '日志字段'},#}
+            {#{ data: 'log_value', title: '日志字段值'},#}
+            {#{ data: 'attack_model', title: '攻击模式'},#}
+            {#{ data: 'techniques_id', title: '技术ID'},#}
+            {#{ data: 'techniques_name', title: '技术名称'},#}
             {#{ data: 'created', title: '创建时间'},#}
             {#{"data": null, "sClass": "center",#}
             {#            "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {#}
@@ -440,9 +440,9 @@
      });
     //重置按钮
     $("#reset").on('click', function () {
-        document.getElementById("log value").value='';
+        document.getElementById("log_value").value='';
         document.getElementById("type").value='';
-        document.getElementById("attack model").value='';
+        document.getElementById("attack_model").value='';
     });
 
     //防止重载

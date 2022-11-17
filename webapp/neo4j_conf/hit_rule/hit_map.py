@@ -32,14 +32,14 @@ def load_rule(rule_data_path):
         tech_name = df.iloc[index, 4]
         log_dict.update({k: str(v).strip() for k, v in zip(df_header, log_data)})
         now_time = datetime.datetime.now().strftime("%d %B %Y")
-        log_dict.update({'created': now_time, 'last modified': now_time})
+        log_dict.update({'created': now_time, 'last_modified': now_time})
 
         result = NodeMatcher(graph).match().where(**log_dict).exists()
         if result == True:
             pass
         else:
             log_node = Node('Rule', **log_dict)
-            graph.merge(log_node, 'Rule', 'log value')
+            graph.merge(log_node, 'Rule', 'log_value')
 
             tech_judge = len(tech_id.split('.'))
             if tech_judge >= 2:
@@ -67,9 +67,9 @@ def create_singleRule(node_label, node_properties):
         node = Node(node_label, **node_properties)
         graph.create(node)
 
-        relation = node_properties.get('attack model')
-        tech_id = node_properties.get('techniques id')
-        tech_name = node_properties.get('techniques name')
+        relation = node_properties.get('attack_model')
+        tech_id = node_properties.get('techniques_id')
+        tech_name = node_properties.get('techniques_name')
         tech_judge = len(tech_id.split('.'))
         if tech_judge >= 2:
             tech_node = matcher.match('SubTechniques').where(f"_.ID='{tech_id}' or _.name='{tech_name}'").first()

@@ -17,12 +17,12 @@ def information_show(iDisplayStart: int, iDisplayLength: int):
     @return:
     """
 
-    query_start = f"""MATCH (g:`Groups`)-[]->(t)<-[]-(r)<-[rel:`log hit rule`]-(log)
+    query_start = f"""MATCH (g:`Groups`)-[]->(t)<-[]-(r)<-[rel:`log_hit_rule`]-(log)
                       WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {LABEL_LIST})
                       MATCH (g)-[:uses]->(tech)
                       WHERE ANY(label_t IN LABELS(tech) WHERE label_t IN ['SubTechniques', 'Techniques'])
                       MATCH (g)-[:uses]->(s:Software)
-                      MATCH (tt)<-[]-(rr)<-[rel:`log hit rule`]-()
+                      MATCH (tt)<-[]-(rr)<-[rel:`log_hit_rule`]-()
                     """
     query_num = f"""RETURN COUNT(DISTINCT g.name) AS num"""
     query_end = f"""RETURN DISTINCT g.name AS group, COLLECT(DISTINCT s.name) AS software,
@@ -59,12 +59,12 @@ def information_search(node_properties: dict, iDisplayStart: int, iDisplayLength
     @return:
     """
 
-    query_start = f"""MATCH (g:`Groups` {'{name:"' + list(node_properties.values())[0] +'"}'})-[]->(t)<-[]-(r)<-[rel:`log hit rule`]-(log)
+    query_start = f"""MATCH (g:`Groups` {'{name:"' + list(node_properties.values())[0] +'"}'})-[]->(t)<-[]-(r)<-[rel:`log_hit_rule`]-(log)
                       WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {LABEL_LIST})
                       MATCH (g)-[:uses]->(tech)
                       WHERE ANY(label_t IN LABELS(tech) WHERE label_t IN ['SubTechniques', 'Techniques'])
                       MATCH (g)-[:uses]->(s:Software)
-                      MATCH (tt)<-[]-(rr)<-[rel:`log hit rule`]-()
+                      MATCH (tt)<-[]-(rr)<-[rel:`log_hit_rule`]-()
                     """
     query_num = f"""RETURN COUNT(DISTINCT g.name) AS num"""
     query_end = f"""RETURN DISTINCT g.name AS group, COLLECT(DISTINCT s.name) AS software,

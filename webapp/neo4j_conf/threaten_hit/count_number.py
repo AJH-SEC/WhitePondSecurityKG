@@ -22,30 +22,30 @@ def threaten_hit_rule(log_info: dict, label_list: list):
     #
     # query_tec = f"""MATCH (tech)-[]-(log)
     #                 WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {label_list})
-    #                 AND log.`log value`='{name}'
+    #                 AND log.`log_value`='{name}'
     #                 RETURN tech.name AS techniques"""
     #
     # query_information = f"""MATCH (gs)-[]-(tech)-[rel_1]-(log)
     #                         WHERE NONE(label_1 IN LABELS(log) WHERE label_1 IN {label_list})
     #                         AND ANY(label_2 IN LABELS(gs) WHERE label_2 IN ['Groups', 'Software'])
-    #                         AND log.`log value`='{name}'
+    #                         AND log.`log_value`='{name}'
     #                         RETURN gs.name"""
 
-    # query_rule = f"""MATCH (n:`Rule`) WHERE n.`log value`='{name}'
+    # query_rule = f"""MATCH (n:`Rule`) WHERE n.`log_value`='{name}'
     #                  RETURN n AS node"""
 
     "日志字段值 {} key为日志任意能确定此日志的属性名 value为key所对应的值"
     log_info_key = list(log_info.keys())[0]
     log_info_value = log_info.get(log_info_key)
 
-    node_rule = NodeMatcher(graph).match('Rule').where(f"_.`log value`='{log_info_value}'").first()
+    node_rule = NodeMatcher(graph).match('Rule').where(f"_.`log_value`='{log_info_value}'").first()
     node_log = NodeMatcher(graph).match().where(f"NONE(label_1 IN LABELS(_) WHERE label_1 IN {label_list}) "
                                                 f"AND _.`{log_info_key}`='{log_info_value}'").first()
 
     if node_rule == None:
         pass
     else:
-        rule_log_relation = Relationship(node_log, 'log hit rule', node_rule,
+        rule_log_relation = Relationship(node_log, 'log_hit_rule', node_rule,
                                          **{'create': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
         graph.merge(rule_log_relation)
 
@@ -79,7 +79,7 @@ def log_hit_num(date_time: str):
     d2 = datetime.timedelta(days=0, hours=23 - now_date.hour, minutes=59 - now_date.minute, seconds=59 - now_date.second)
     end_time = now_date + d2
 
-    query = f"""MATCH p=()-[r:`log hit rule`]->() WHERE '{start_time}'< r.create<= '{end_time}' RETURN COUNT(r) AS count"""
+    query = f"""MATCH p=()-[r:`log_hit_rule`]->() WHERE '{start_time}'< r.create<= '{end_time}' RETURN COUNT(r) AS count"""
     info = graph.run(query).data()
     info_list = []
     for text in info:
@@ -96,9 +96,9 @@ def log_hit_info(iDisplayStart, iDisplayLength):
     @param iDisplayLength: 分页数据长度
     @return:
     """
-    query = f"""MATCH (log)-[r:`log hit rule`]->(rule:`Rule`)-[r2]->(tech) 
+    query = f"""MATCH (log)-[r:`log_hit_rule`]->(rule:`Rule`)-[r2]->(tech) 
                 RETURN DISTINCT log, rule, TYPE(r2) AS r2 SKIP {iDisplayStart} LIMIT {iDisplayLength}"""
-    query_num = f"""MATCH (log)-[r:`log hit rule`]->(rule:`Rule`)-[r2]->(tech) 
+    query_num = f"""MATCH (log)-[r:`log_hit_rule`]->(rule:`Rule`)-[r2]->(tech) 
                 RETURN COUNT(DISTINCT log) AS count"""
     info = graph.run(query).data()
     info_num = graph.run(query_num).data()
@@ -109,7 +109,7 @@ def log_hit_info(iDisplayStart, iDisplayLength):
     for text in info:
         every_text = {}
         every_text.update(dict(text['log']))
-        every_text.update({'attack model': text['r2']})
+        every_text.update({'attack_model': text['r2']})
         info_list.append(every_text)
     for text in info_num:
         info_number.append(text['count'])
@@ -119,24 +119,24 @@ def log_hit_info(iDisplayStart, iDisplayLength):
 def log_hit_search(node_properties: dict, iDisplayStart: int, iDisplayLength: int):
     """
     通过条件查询威胁命中数据
-    @param node_properties: 节点属性 eg:{"log value": "c3f70729-6c65-4874-b521-f9d8d2220866", 'type': 'http', 'attack model': 'test'}
+    @param node_properties: 节点属性 eg:{"log_value": "c3f70729-6c65-4874-b521-f9d8d2220866", 'type': 'http', 'attack_model': 'test'}
     @param iDisplayStart: 分页开始数
     @param iDisplayLength: 分页数据长度
     @return:
     """
 
-    query_start = f"""MATCH (log)-[r]->(rule:`Rule`)-[r2]->(tech) WHERE TYPE(r)='log hit rule'"""
+    query_start = f"""MATCH (log)-[r]->(rule:`Rule`)-[r2]->(tech) WHERE TYPE(r)='log_hit_rule'"""
     query_end = f"""RETURN DISTINCT log, rule, TYPE(r2) AS r2 SKIP {iDisplayStart} LIMIT {iDisplayLength}"""
     query_end_num = f"""RETURN COUNT(DISTINCT log) AS count"""
 
     if node_properties.get('type'):
         log_type = f"""AND log.type="{node_properties.get('type')}" """
         query_start = query_start + log_type
-    if node_properties.get('log value'):
-        log_value = f"""AND rule.`log value`="{node_properties.get('log value')}" """
+    if node_properties.get('log_value'):
+        log_value = f"""AND rule.`log_value`="{node_properties.get('log_value')}" """
         query_start = query_start + log_value
-    if node_properties.get('attack model'):
-        log_model = f"""AND rule.`attack model`="{node_properties.get('attack model')}" """
+    if node_properties.get('attack_model'):
+        log_model = f"""AND rule.`attack_model`="{node_properties.get('attack_model')}" """
         query_start = query_start + log_model
 
     query = query_start + query_end
@@ -153,7 +153,7 @@ def log_hit_search(node_properties: dict, iDisplayStart: int, iDisplayLength: in
         for text in info:
             every_text = {}
             every_text.update(dict(text['log']))
-            every_text.update({'attack model': text['r2']})
+            every_text.update({'attack_model': text['r2']})
             info_list.append(every_text)
         # info_list.append(dict(info[0]['log']))
         # info_list.append(dict(info[2])['r2'])
@@ -174,11 +174,11 @@ if __name__ == '__main__':
 
     # print(log_hit_info(0, 15))
 
-    # log_hit_search({"log value": "c3f70729-6c65-4874-b521-f9d8d2220866", "techniques id": "T1111"})
-    # log_hit_search({"log value": "c3f70729-6c65-4874-b521-f9d8d2220866", 'type': 'http', 'attack model': 'test'}, 0, 15)
-    # log_hit_search({"log value": "c3f70729-6c65-4874-b521-f9d8d2220867"}, 0, 15)
+    # log_hit_search({"log_value": "c3f70729-6c65-4874-b521-f9d8d2220866", "techniques_id": "T1111"})
+    # log_hit_search({"log_value": "c3f70729-6c65-4874-b521-f9d8d2220866", 'type': 'http', 'attack_model': 'test'}, 0, 15)
+    # log_hit_search({"log_value": "c3f70729-6c65-4874-b521-f9d8d2220867"}, 0, 15)
     print(log_hit_search({'type': 'http'}, 0, 15))
-    # log_hit_search({'attack model': 'test'}, 0, 15)
+    # log_hit_search({'attack_model': 'test'}, 0, 15)
     # log_hit_search({'type': 'http'}, 0, 15)
     # log_hit_search({'name': 'a7f25335-1cfe-4a2d-b74a-fc9954b127a6'})
     # log_hit_search({'time': 2022})
@@ -187,7 +187,7 @@ if __name__ == '__main__':
 """
 MATCH (g)-[]-(t)-[r]-(ll) 
 WHERE NONE(l IN LABELS(ll) WHERE l IN ['SubTechniques', 'Techniques', 'Tactics', 'Citations', 'Datasource', 'DatasourceComponent', 'Software', 'Groups', 'Mitigations']) 
-AND ll.`log value`='c3f70729-6c65-4874-b521-f9d8d2220866' 
+AND ll.`log_value`='c3f70729-6c65-4874-b521-f9d8d2220866' 
 AND any(label in labels(g) where label in ['Groups', 'Software']) 
 return g
 """

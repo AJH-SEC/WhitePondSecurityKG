@@ -42,7 +42,7 @@ def rule_target_create(request):
         dic.pop('csrfmiddlewaretoken')
         now = datetime.now()
         now_str = now.strftime("%d %B %Y")
-        dic.update({'created': now_str, 'last modified': now_str})
+        dic.update({'created': now_str, 'last_modified': now_str})
         node_label = 'Rule'
         create_ret = create_singleRule(node_label, dic)
         if create_ret == "此节点已经存在":
@@ -71,9 +71,9 @@ def rule_target_delete(request):
     """
     try:
         req = request.GET.dict()
-        logvalue = req.get('log value')
+        logvalue = req.get('log_value')
         node_label = 'Rule'
-        delete_rule(node_label, {'log value': logvalue})
+        delete_rule(node_label, {'log_value': logvalue})
         return ajax_success()
     except Exception as e:
         return ajax_error("删除失败")

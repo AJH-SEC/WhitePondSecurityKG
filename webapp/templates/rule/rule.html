@@ -39,11 +39,11 @@
                                         <div class="form-group row" style="text-align: center; font-size:15px;">
                                             <label class="col-sm-2 col-form-label">日志字段值</label>
                                             <div class="col-sm-4" style="text-align: center">
-                                              <input type="text" class="form-control" id="log value" name="log value" placeholder="请输入日志字段值">
+                                              <input type="text" class="form-control" id="log_value" name="log_value" placeholder="请输入日志字段值">
                                             </div>
                                             <label class="col-sm-2 col-form-label">技术ID</label>
                                             <div class="col-sm-4" style="text-align: center">
-                                              <input type="text" class="form-control" id="techniques id" name="techniques id" placeholder="请输入技术ID">
+                                              <input type="text" class="form-control" id="techniques_id" name="techniques_id" placeholder="请输入技术ID">
                                             </div>
                                         </div>
                                     </div>
@@ -109,31 +109,31 @@
                                         <div class="form-group row" style="text-align: center">
                                             <label class="col-sm-2 col-form-label">日志字段</label>
                                             <div class="col-sm-10">
-                                              <input type="text" class="form-control" name="log byte" required="required">
+                                              <input type="text" class="form-control" name="log_byte" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group row" style="text-align: center">
                                             <label class="col-sm-2 col-form-label">日志字段值</label>
                                             <div class="col-sm-10">
-                                              <input type="text" class="form-control" name="log value" required="required">
+                                              <input type="text" class="form-control" name="log_value" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group row" style="text-align: center">
                                             <label class="col-sm-2 col-form-label">攻击模式</label>
                                             <div class="col-sm-10">
-                                              <input type="text" class="form-control" name="attack model" required="required">
+                                              <input type="text" class="form-control" name="attack_model" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group row" style="text-align: center">
                                             <label class="col-sm-2 col-form-label">技术ID</label>
                                             <div class="col-sm-10">
-                                              <input type="text" class="form-control" name="techniques id" required="required">
+                                              <input type="text" class="form-control" name="techniques_id" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group row" style="text-align: center">
                                             <label class="col-sm-2 col-form-label">技术名称</label>
                                             <div class="col-sm-10">
-                                              <input type="text" class="form-control" name="techniques name" required="required">
+                                              <input type="text" class="form-control" name="techniques_name" required="required">
                                             </div>
                                         </div>
                                     </div>
@@ -274,6 +274,29 @@
 //datatables
 <script>
     // 点击详情时的数据
+    var remarkShowLength = 20;
+    function changeShowRemarks(obj){//obj是td
+       var content = $(obj).attr("content");
+       if(content != null && content != ''){
+          if($(obj).attr("isDetail") == 'true'){//当前显示的是详细备注，切换到显示部分
+             //$(obj).removeAttr('isDetail');//remove也可以
+             $(obj).attr('isDetail',false);
+             $(obj).html(getPartialRemarksHtml(content));
+          }else{//当前显示的是部分备注信息，切换到显示全部
+             $(obj).attr('isDetail',true);
+             $(obj).html(getTotalRemarksHtml(content));
+          }
+       }
+    }
+    //部分备注信息
+    function getPartialRemarksHtml(remarks){
+          return remarks.substr(0,remarkShowLength) + '&nbsp;&nbsp;<a href="javascript:void(0);" ><b>...</b></a>';
+    }
+
+    //全部备注信息
+    function getTotalRemarksHtml(remarks){
+          return remarks + '&nbsp;&nbsp;<a href="javascript:void(0);" >收起</a>';
+    }
     function format(d) {
         //详情
         return (
@@ -307,15 +330,31 @@
         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"], // 导出的数据格式
         "pageLength": 15,//每页显示数据
         "bProcessing": true, //显示数据加载中\
+        "createdRow": function( row, data, dataIndex ) {
+           if(data.log_value.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(1).attr('ondblclick','javascript:changeShowRemarks(this);');
+              $(row).children('td').eq(1).attr("style", "word-break: break-all; word-wrap:break-word;")
+           }
+          
+           $(row).children('td').eq(1).attr('content',data.log_value);
+         },
         ajax: '/rule/target/data/',
         columns: [
-            { data: 'log byte' },
-            { data: 'log value' },
-            { data: 'attack model' },
-            { data: 'techniques id' },
-            { data: 'techniques name' },
+            { data: 'log_byte' },
+            { data: 'log_value' , 
+                "render": function (data, type, full, meta) {
+                    if (full.log_value.length > remarkShowLength) {
+                        return getPartialRemarksHtml(full.log_value);//显示部分信息
+                    } else {
+                        return full.log_value;//显示原始全部信息
+                    }
+                },
+            },
+            { data: 'attack_model' },
+            { data: 'techniques_id' },
+            { data: 'techniques_name' },
             { data: 'created' },
-            {#{ data: 'last modified' },#}
+
             // 操作相关
             {"data": null, "sClass": "center",
                         "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
@@ -325,8 +364,7 @@
                             var remove = $('<a href="javascript:;" class="btn btn-danger btn-sm remove111"> <i class="fas fa-trash"> </i>删除 </a>');
 
                             // 添加相关的操作到页面
-                            {#element.append(manage);#}
-                            {#element.append(ignore);#}
+
                             element.append(remove);
                             // 相关操作的触发
                             manage.on('click', function () {
@@ -362,7 +400,7 @@
                                 var $tr = $(this).parents('tr');
                                 var con = confirm("确定删除？");
                                 if (con) {
-                                    var params = {'log value': oData["log value"]}
+                                    var params = {'log_value': oData["log_value"]}
                                     $.get("/rule/target/data/delete/", params, function (data) {
                                         if (data.success) {
                                             $.growlService("删除成功", {type: "success"});
@@ -379,15 +417,15 @@
     });
         //查找触发
     $("#submit").on('click', function () {
-        var log_value = document.getElementById("log value").value
-        var techniques_id = document.getElementById("techniques id").value
+        var log_value = document.getElementById("log_value").value
+        var techniques_id = document.getElementById("techniques_id").value
         var prams = ''
         if (techniques_id) {
-            var techniques_id_str = 'techniques id=' + techniques_id + '&'
+            var techniques_id_str = 'techniques_id=' + techniques_id + '&'
             prams += techniques_id_str
         }
         if (log_value){
-            var log_byte_str = 'log value=' + log_value
+            var log_byte_str = 'log_value=' + log_value
             prams += log_byte_str
         }
         table.ajax.url("/rule/target/data/search/?" + prams).load();
@@ -395,8 +433,8 @@
     });
     //重置按钮
     $("#reset").on('click', function () {
-        document.getElementById("log value").value='';
-        document.getElementById("techniques id").value='';
+        document.getElementById("log_value").value='';
+        document.getElementById("techniques_id").value='';
     });
 
     //防止重载

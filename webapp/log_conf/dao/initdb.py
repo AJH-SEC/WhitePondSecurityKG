@@ -131,9 +131,9 @@ class Neo4jDb():
                 log_info_value = log_map.get(kk)
                 print(log_info_key)
                 print(log_info_value)
-                query = f"""MATCH (rule:`Rule`) WHERE rule.`log value`='{log_info_value}' AND rule.`log byte` IN {log_keys}
+                query = f"""MATCH (rule:`Rule`) WHERE rule.`log_value`='{log_info_value}' AND rule.`log_byte` IN {log_keys}
                             MATCH (log:`{log_labels}`) WHERE log.`{log_info_key}`='{log_info_value}'
-                            MERGE (log)-[r:`log hit rule`""" + """{create:""" + f""" "{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}" """ + """}]->(rule)"""+f"""
+                            MERGE (log)-[r:`log_hit_rule`""" + """{create:""" + f""" "{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}" """ + """}]->(rule)"""+f"""
                             
                          """
                 return tx.run(query)
@@ -161,16 +161,16 @@ class Neo4jDb():
                 # print(log_info_key)
                 # print(log_info_value)
                 # TODO :是否为版本问题，修改以id方式进行查询日志
-                query = f"""MATCH (rule:Rule) WHERE rule.`log value`='{log_info_value}' AND rule.`log byte`='{log_info_key}'
+                query = f"""MATCH (rule:Rule) WHERE rule.log_value='{log_info_value}' AND rule.log_byte='{log_info_key}'
                             MATCH (log:{log_labels}) WHERE log.`{log_info_key}`='{log_info_value}' AND log.{NormalBeatsDealEnum.LOG_ID.value}='{log_id_value}'
-                            MERGE (log)-[r:`log hit rule`""" + """{create:""" + f""" "{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}" """ + """}]->(rule)""" + f"""
+                            MERGE (log)-[r:log_hit_rule""" + """{create:""" + f""" "{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}" """ + """}]->(rule)""" + f"""
                          """
                 with self.graph.session() as session:
                     session.run(query)
 
     def search_rule(self, tx):
         query_rule = ("MATCH (rule:Rule) "
-                      "RETURN DISTINCT rule.`log byte` AS rule_key")
+                      "RETURN DISTINCT rule.`log_byte` AS rule_key")
 
         result = tx.run(query_rule)
         # return [row['rule_key'] for row in result]

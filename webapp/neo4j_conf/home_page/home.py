@@ -50,7 +50,7 @@ def show_hit_branch(node_label: str, node_property: str):
     properties_list = show_node_property_value(node_label, node_property)
     info_list = []
     for property in properties_list:
-        query = f"""MATCH p=(log)-[r:`log hit rule`]->(rule)-[]-(n:Techniques) where n.tactics='{property}' 
+        query = f"""MATCH p=(log)-[r:`log_hit_rule`]->(rule)-[]-(n:Techniques) where n.tactics='{property}' 
         return COUNT(n) AS count"""
         node_info = graph.run(query).data()
         if node_info:
