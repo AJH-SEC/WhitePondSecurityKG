@@ -91,7 +91,7 @@ python main.py
 首页： 数据的视图展示
 
 #### ATT&CK管理
-导入attack数据： att&ck管理 ——> 总览 ——> 批量导入(数据模板请参照[ATT&CK官网数据](http://attack.mitre.org/docs/enterprise-attack-v12.0/enterprise-attack-v12.0.xlsx)
+导入attack数据： att&ck管理 ——> 总览 ——> 批量导入(数据模板请参照[ATT&CK官网数据](http://attack.mitre.org/docs/enterprise-attack-v12.1/enterprise-attack-v12.1.xlsx)
 注意：导入数据时会删除neo4j中原有的数据，请谨慎操作！
 
 数据编辑：attack相关的数据可在对应页新建，也可修改删除对应的单条数据，点击查看可查看到数据的其他详细信息（下同）。
