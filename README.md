@@ -92,7 +92,9 @@ python main.py
 
 #### ATT&CK管理
 导入attack数据： att&ck管理 ——> 总览 ——> 批量导入(数据模板请参照[ATT&CK官网数据](http://attack.mitre.org/docs/enterprise-attack-v12.0/enterprise-attack-v12.0.xlsx)
-。目前增加战术、技术、软件、缓解措施、战役、数据资源、组织的name和description的中文解释字段展示，需要下载模板后在末尾增加name_zh和description_zh两个字段，并在相应字段下填入内容，再进行导入即可。
+。目前增加战术、技术、软件、缓解措施、战役、数据资源、组织的name和description的中文解释字段展示，需要下载模板后在末尾增加name_zh和description_zh两个字段，并在相应字段下填入内容，再进行导入即可。见如下示例：
+![](/md_data/eg_template_import.png)
+
 注意：导入数据时会删除neo4j中原有的数据，请谨慎操作！
 
 数据编辑：attack相关的数据可在对应页新建，也可修改删除对应的单条数据，点击查看可查看到数据的其他详细信息（下同）。
@@ -119,6 +121,6 @@ python main.py
 可开issue中或微信群中反馈，微信群二维码如下：
 
 
-![](weixin_code.jpg)
+![](/md_data/weixin_code.jpg)
 
 
