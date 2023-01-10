@@ -58,7 +58,10 @@ def home(request, template_name):
     """
     home 页面
     """
-    dic = showNode()
+    try:
+        dic = showNode()
+    except:
+        dic = {}
 
     return render(request, template_name, dic)
 

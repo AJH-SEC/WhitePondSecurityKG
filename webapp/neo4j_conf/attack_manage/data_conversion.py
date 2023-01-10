@@ -1,5 +1,7 @@
 # -*-coding:utf-8-*-
 import os
+import shutil
+
 import xlrd
 import pandas as pd
 
@@ -10,6 +12,7 @@ def read_excel(xslx_data, tag_path):
     :param tag_path: 切割好的数据
     :return: 切分好的数据
     """
+    judge_file(tag_path)
     xlsx_file = xlrd.open_workbook(xslx_data, file_contents=xslx_data.read())
 
     for sheet_index in range(xlsx_file.nsheets):
@@ -41,6 +44,12 @@ def read_excel(xslx_data, tag_path):
             df = df.rename(columns=df.iloc[0]).drop(df.index[0])
             df.to_csv(tag_file, index=False)
 
+def judge_file(file_path):
+    if os.path.exists(file_path):
+        shutil.rmtree(file_path)
+        os.makedirs(file_path)
+    else:
+        os.makedirs(file_path)
 
 def get_merged_cells(sheet):
     """

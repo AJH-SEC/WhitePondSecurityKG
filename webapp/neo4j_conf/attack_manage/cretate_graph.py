@@ -28,10 +28,20 @@ def get_techniques(tech_path):
         info = info_all.values
 
         description = info_all['description']
+        if 'description_zh' in info_all:
+            description_zh = info_all['description_zh']
+            if '中国' in description_zh:
+                info_all['description_zh'] = str('')
+
         if 'China' in description or 'Chinese' in description:
             info_all['description'] = str('')
 
-        info_dict.update({k: str(v) for k, v in zip(df_header, info)})
+        if 'name_zh' in info_all:
+            info_dict.update({k: str(v) for k, v in zip(df_header, info)})
+        else:
+            info_dict.update({k: str(v) for k, v in zip(df_header, info)})
+            info_dict.update({'name_zh': '', 'description_zh': ''})
+
         citations_list = info_all['relationship citations'].split('),')
 
         # 判断是否是子技术
@@ -111,8 +121,17 @@ def get_NodeRelation(data_path,
             if 'China' in description or 'Chinese' in description:
                 info_all['description'] = str('')
             info_dict.update({k: str(v).strip() for k, v in zip(df_header, info)})
+            info_dict.update({'name_zh': '', 'description_zh': ''})
+
+        if 'description_zh' in info_all:
+            description_zh = info_all['description_zh']
+            if '中国' in description_zh:
+                info_all['description_zh'] = str('')
+            info_dict.update({k: str(v).strip() for k, v in zip(df_header, info)})
+
         else:
             info_dict.update({k: str(v).strip() for k, v in zip(df_header, info)})
+            info_dict.update({'name_zh': '',  'description_zh': ''})
 
         subject_node = Node(subject_label, **info_dict)
         graph.create(subject_node)
@@ -150,21 +169,50 @@ def get_datasources(datasource_path):
         data_judge = info_all['name'].split(':')
         # 数据源与数据组件的判断
         if len(data_judge) >= 2:
-            ds = data_judge[0].strip()
-            info[0] = data_judge[1].strip()
-            info[1] = data_judge[0].strip()
-            df_header[1] = 'datasource'
-            info_dict.update({k: str(v) for k, v in zip(df_header, info)})
+            if 'name_zh' in info_all and 'description_zh':
+                data_judge_zh = info_all['name_zh'].split('：')
+                ds = data_judge[0].strip()
 
-            ds_component_node = Node('DatasourceComponent', **info_dict)
-            graph.create(ds_component_node)
+                info[0] = data_judge[1].strip()
+                info[1] = data_judge[0].strip()
+                df_header[1] = 'datasource'
 
-            ds_node = matcher.match('Datasource').where(f"_.name='{ds}'").first()
-            dsc_relation = Relationship(ds_node, 'data-component of', ds_component_node)
-            graph.create(dsc_relation)
+                datasource_zh = data_judge_zh[0].strip()
+                name_zh = data_judge_zh[1].strip()
+
+                info_dict.update({k: str(v) for k, v in zip(df_header, info)})
+                info_dict.update({'name_zh': name_zh, 'datasource_zh': datasource_zh})
+                # print('z'*3, info_dict)
+
+                ds_component_node = Node('DatasourceComponent', **info_dict)
+                graph.create(ds_component_node)
+
+                ds_node = matcher.match('Datasource').where(f"_.name='{ds}'").first()
+                dsc_relation = Relationship(ds_node, 'data-component of', ds_component_node)
+                graph.create(dsc_relation)
+            else:
+                ds = data_judge[0].strip()
+                info[0] = data_judge[1].strip()
+                info[1] = data_judge[0].strip()
+                df_header[1] = 'datasource'
+                info_dict.update({k: str(v) for k, v in zip(df_header, info)})
+                info_dict.update({'name_zh': '', 'datasource_zh': '', 'description_zh': ''})
+                # print('e'*6, info_dict)
+
+                ds_component_node = Node('DatasourceComponent', **info_dict)
+                graph.create(ds_component_node)
+
+                ds_node = matcher.match('Datasource').where(f"_.name='{ds}'").first()
+                dsc_relation = Relationship(ds_node, 'data-component of', ds_component_node)
+                graph.create(dsc_relation)
 
         if len(data_judge) < 2:
-            info_dict.update({k: str(v) for k, v in zip(df_header, info)})
+            if 'name_zh' in info_all:
+                info_dict.update({k: str(v) for k, v in zip(df_header, info)})
+            else:
+                info_dict.update({k: str(v) for k, v in zip(df_header, info)})
+                info_dict.update({'name_zh': '', 'description_zh': ''})
+            # print('d'*10, info_dict)
 
             ds_node = Node('Datasource', **info_dict)
             graph.create(ds_node)
@@ -190,31 +238,44 @@ def relationships(relation_path):
         mapping_desc = info_all['mapping description']
         
         # 关系信息
-        relation_info = {'source type': source_type,
-                         'target type': target_type,
-                         'mapping description': mapping_desc
-                         }
+        if 'mapping_description_zh' in info_all:
+            mapping_desc_zh = info_all['mapping_description_zh']
+            relation_info = {'source type': source_type,
+                             'target type': target_type,
+                             'mapping description': mapping_desc,
+                             'mapping_description_zh': mapping_desc_zh
+                             }
+        else:
+            relation_info = {'source type': source_type,
+                             'target type': target_type,
+                             'mapping description': mapping_desc
+                             }
         id_judge = info_all['target ID'].split('.')
 
         # 数据组件与技术/子技术
         if info_all['source type'] == 'datacomponent':
             ds_component_node = matcher.match('DatasourceComponent').where(f"_.name=~'{source_name}'").first()
+            # print('数据组件与技术/子技术', ds_component_node)
             create_relation(id_judge, target_type, target_id, ds_component_node, mapping_type, relation_info)
         # 缓解措施与技术/子技术
         if info_all['source type'] == 'mitigation':
             mitigation_node = matcher.match('Mitigations').where(f"_.name='{source_name}'").first()
+            # print('缓解措施与技术/子技术', mitigation_node)
             create_relation(id_judge, target_type, target_id, mitigation_node, mapping_type, relation_info)
         # 组织与软件、组织与技术/子技术
         if info_all['source type'] == 'group':
             group_node = matcher.match('Groups').where(f"_.name='{source_name}'").first()
+            # print('组织与软件、组织与技术/子技术', group_node)
             create_relation(id_judge, target_type, target_id, group_node, mapping_type, relation_info)
         # 软件与技术/子技术
         if info_all['source type'] == 'software':
             software_node = matcher.match('Software').where(f"_.name='{source_name}'").first()
+            # print('软件与技术/子技术', source_name, target_id)
             create_relation(id_judge, target_type, target_id, software_node, mapping_type, relation_info)
         # 战役与技术/子技术
         if info_all['source type'] == 'campaign':
             campaign_node = matcher.match('Campaign').where(f"_.name='{source_name}'").first()
+            # print('战役与技术/子技术', campaign_node)
             create_relation(id_judge, target_type, target_id, campaign_node, mapping_type, relation_info)
 
 
@@ -241,6 +302,7 @@ def create_relation(id_judge, target_type, target_id,
         graph.create(dt_relation)
 
     if len(id_judge) < 2 and target_type == 'software':
+        # print(target_id)
         software_node = matcher.match('Software').where(f"_.ID='{target_id}'").first()
         gs_relation = Relationship(source_type_node, mapping_type, software_node, **relation_info)
         graph.create(gs_relation)

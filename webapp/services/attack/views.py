@@ -83,7 +83,13 @@ def attack_tactics_data(request):
     """
     战术管理 datatables展示的数据
     """
-    data = {'data': searchNode(NodeLabel.TACTICS)}
+    data_value = searchNode(NodeLabel.TACTICS)
+    for oen_data in data_value:
+        if "name_zh" not in oen_data.keys():
+            oen_data["name_zh"] = ""
+        if "description_zh" not in oen_data.keys():
+            oen_data["description_zh"] = ""
+    data = {'data': data_value}
     return HttpResponse(json.dumps(data))
 
 
@@ -155,7 +161,13 @@ def attack_technology_data(request):
     """
     技术管理 datatables展示的数据
     """
-    data = {'data': searchNode(NodeLabel.TECHNIQUES)}
+    data_value = searchNode(NodeLabel.TECHNIQUES)
+    for oen_data in data_value:
+        if "name_zh" not in oen_data.keys():
+            oen_data["name_zh"] = ""
+        if "description_zh" not in oen_data.keys():
+            oen_data["description_zh"] = ""
+    data = {'data': data_value}
     return HttpResponse(json.dumps(data))
 
 
@@ -227,7 +239,13 @@ def attack_sub_technology_data(request):
     """
     子技术管理 数据
     """
-    data = {'data': searchNode(NodeLabel.SUBTECHNIQUES)}
+    data_value = searchNode(NodeLabel.SUBTECHNIQUES)
+    for oen_data in data_value:
+        if "name_zh" not in oen_data.keys():
+            oen_data["name_zh"] = ""
+        if "description_zh" not in oen_data.keys():
+            oen_data["description_zh"] = ""
+    data = {'data': data_value}
     return HttpResponse(json.dumps(data))
 
 
@@ -299,7 +317,13 @@ def attack_mitigations_data(request):
     """
     缓解措施管理 数据
     """
-    data = {'data': searchNode(NodeLabel.MITIGATIONS)}
+    data_value = searchNode(NodeLabel.MITIGATIONS)
+    for oen_data in data_value:
+        if "name_zh" not in oen_data.keys():
+            oen_data["name_zh"] = ""
+        if "description_zh" not in oen_data.keys():
+            oen_data["description_zh"] = ""
+    data = {'data': data_value}
     return HttpResponse(json.dumps(data))
 
 
@@ -371,7 +395,13 @@ def attack_organization_data(request):
     """
     组织管理 数据
     """
-    data = {'data': searchNode(NodeLabel.GROUPS)}
+    data_value = searchNode(NodeLabel.GROUPS)
+    for oen_data in data_value:
+        if "name_zh" not in oen_data.keys():
+            oen_data["name_zh"] = ""
+        if "description_zh" not in oen_data.keys():
+            oen_data["description_zh"] = ""
+    data = {'data': data_value}
     return HttpResponse(json.dumps(data))
 
 
@@ -443,7 +473,13 @@ def attack_software_data(request):
     """
     软件管理 数据
     """
-    data = {'data': searchNode(NodeLabel.SOFTWARE)}
+    data_value = searchNode(NodeLabel.SOFTWARE)
+    for oen_data in data_value:
+        if "name_zh" not in oen_data.keys():
+            oen_data["name_zh"] = ""
+        if "description_zh" not in oen_data.keys():
+            oen_data["description_zh"] = ""
+    data = {'data': data_value}
     return HttpResponse(json.dumps(data))
 
 
@@ -515,7 +551,13 @@ def attack_data_sources_data(request):
     """
     数据资源管理 数据
     """
-    data = {'data': searchNode(NodeLabel.DATASOURCE)}
+    data_value = searchNode(NodeLabel.DATASOURCE)
+    for oen_data in data_value:
+        if "name_zh" not in oen_data.keys():
+            oen_data["name_zh"] = ""
+        if "description_zh" not in oen_data.keys():
+            oen_data["description_zh"] = ""
+    data = {'data': data_value}
     return HttpResponse(json.dumps(data))
 
 
@@ -587,7 +629,13 @@ def attack_datasource_component_data(request):
     """
     数据组件 数据
     """
-    data = {'data': searchNode(NodeLabel.DATASOURCECOMPONENT)}
+    data_value = searchNode(NodeLabel.DATASOURCECOMPONENT)
+    for oen_data in data_value:
+        if "name_zh" not in oen_data.keys():
+            oen_data["name_zh"] = ""
+        if "description_zh" not in oen_data.keys():
+            oen_data["description_zh"] = ""
+    data = {'data': data_value}
     return HttpResponse(json.dumps(data))
 
 
@@ -659,7 +707,13 @@ def attack_campaign_data(request):
     """
     战役 datatables数据
     """
-    data = {'data': searchNode(NodeLabel.CAMPAIGN)}
+    data_value = searchNode(NodeLabel.CAMPAIGN)
+    for oen_data in data_value:
+        if "name_zh" not in oen_data.keys():
+            oen_data["name_zh"] = ""
+        if "description_zh" not in oen_data.keys():
+            oen_data["description_zh"] = ""
+    data = {'data': data_value}
     return HttpResponse(json.dumps(data))
 
 

@@ -53,12 +53,14 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>名称</th>
+                                <th>名称(EN)</th>
+                                <th>名称(ZH)</th>
                                 <th>所属战术</th>
-                                <th>描述信息</th>
+                                <th>描述信息(EN)</th>
+                                <th>描述信息(ZH)</th>
                                 <th>创建日期</th>
-                                <th>修改日期</th>
-                                <th>版本号</th>
+<!--                                <th>修改日期</th>-->
+<!--                                <th>版本号</th>-->
 {#                                <th>侦查信息</th>#}
 {#                                <th>应用平台</th>#}
 {#                                <th>应用数据源</th>#}
@@ -106,15 +108,27 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">名称</label>
+                                            <label class="col-sm-2 col-form-label">名称(EN)</label>
                                             <div class="col-sm-10">
                                               <input type="text" class="form-control" name="name" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">描述信息</label>
+                                            <label class="col-sm-2 col-form-label">描述信息(EN)</label>
                                             <div class="col-sm-10">
                                               <input type="text" class="form-control" name="description">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">名称(ZH)</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="name_zh" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">描述信息(ZH)</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="description_zh">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -263,15 +277,27 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">名称</label>
+                                            <label class="col-sm-2 col-form-label">名称(EN)</label>
                                             <div class="col-sm-10">
                                               <input type="text" class="form-control" name="name" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">描述信息</label>
+                                            <label class="col-sm-2 col-form-label">描述信息(EN)</label>
                                             <div class="col-sm-10">
                                               <input type="text" class="form-control" name="description">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">名称(ZH)</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="name_zh" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">描述信息(ZH)</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="description_zh">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -496,6 +522,18 @@
         return (
             '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
             '<tr>' +
+            '<td>修改日期</td>' +
+            '<td>' +
+            d['last modified'] +
+            '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td>版本号</td>' +
+            '<td>' +
+            d.version +
+            '</td>' +
+            '</tr>' +
+            '<tr>' +
             '<td>侦查信息</td>' +
             '<td>' +
             d.detection +
@@ -610,14 +648,22 @@
         "pageLength": 15,//每页显示数据
         "bProcessing": true, //显示数据加载中\
         "createdRow": function( row, data, dataIndex ) {
-           if(data.description.length > remarkShowLength){//只有超长，才有td点击事件
-              $(row).children('td').eq(3).attr('ondblclick','javascript:changeShowRemarks(this);');
-           }
            if(data.name.length > remarkShowLength){//只有超长，才有td点击事件
-              $(row).children('td').eq(1).attr('ondblclick','javascript:changeShowRemarks(this);');
+               $(row).children('td').eq(1).attr('ondblclick','javascript:changeShowRemarks(this);');
            }
+           if(data.name_zh.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(2).attr('ondblclick','javascript:changeShowRemarks(this);');
+           }
+           if(data.description.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(4).attr('ondblclick','javascript:changeShowRemarks(this);');
+           }
+           if(data.description_zh.length > remarkShowLength){//只有超长，才有td点击事件
+                $(row).children('td').eq(5).attr('ondblclick','javascript:changeShowRemarks(this);');
+            }
            $(row).children('td').eq(1).attr('content',data.name);
-           $(row).children('td').eq(3).attr('content',data.description);
+            $(row).children('td').eq(2).attr('content',data.name_zh);
+            $(row).children('td').eq(4).attr('content',data.description);
+           $(row).children('td').eq(5).attr('content',data.description_zh);
          },
         ajax: '/attack/sub_technology/data/',
         columns: [
@@ -631,6 +677,15 @@
                         }
                     }
             },
+            { data: 'name_zh' ,
+                "render": function (data, type, full, meta) {
+                    if (full.name_zh.length > remarkShowLength) {
+                     return getPartialRemarksHtml(full.name_zh);//显示部分信息
+                    } else {
+                        return full.name_zh;//显示原始全部信息
+                        }
+                    }
+            },
             { data: 'tactics' },
             { data: 'description' ,
                 "render": function (data, type, full, meta) {
@@ -641,9 +696,18 @@
                         }
                     }
             },
+            { data: 'description_zh' ,
+                "render": function (data, type, full, meta) {
+                    if (full.description_zh.length > remarkShowLength) {
+                     return getPartialRemarksHtml(full.description_zh);//显示部分信息
+                    } else {
+                        return full.description_zh;//显示原始全部信息
+                        }
+                    }
+            },
             { data: 'created' },
-            { data: 'last modified' },
-            { data: 'version' },
+            // { data: 'last modified' },
+            // { data: 'version' },
             {#{ data: 'detection' },#}
             {#{ data: 'platforms' },#}
             {#{ data: 'data sources' },#}

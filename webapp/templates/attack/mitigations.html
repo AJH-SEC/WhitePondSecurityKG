@@ -53,13 +53,15 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>名称</th>
-                                <th>描述信息</th>
+                                <th>名称(EN)</th>
+                                <th>名称(ZH)</th>
+                                <th>描述信息(EN)</th>
+                                <th>描述信息(ZH)</th>
                                 <th>创建时间</th>
                                 <th>修改时间</th>
                                 <th>版本号</th>
-                                <th>关系引用</th>
-                                <th>信息链接</th>
+<!--                                <th>关系引用</th>-->
+<!--                                <th>信息链接</th>-->
                                 <th>查看</th>
                                 <th>操作</th>
                             </tr>
@@ -94,15 +96,27 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">名称</label>
+                                            <label class="col-sm-2 col-form-label">名称(EN)</label>
                                             <div class="col-sm-10">
                                               <input type="text" class="form-control" name="name" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">描述信息</label>
+                                            <label class="col-sm-2 col-form-label">描述信息(EN)</label>
                                             <div class="col-sm-10">
                                               <input type="text" class="form-control" name="description">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">名称(ZH)</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="name_zh" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">描述信息(ZH)</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="description_zh">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -167,15 +181,27 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">名称</label>
+                                            <label class="col-sm-2 col-form-label">名称(EN)</label>
                                             <div class="col-sm-10">
                                               <input type="text" class="form-control" name="name" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">描述信息</label>
+                                            <label class="col-sm-2 col-form-label">描述信息(EN)</label>
                                             <div class="col-sm-10">
                                               <input type="text" class="form-control" name="description">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">名称(ZH)</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="name_zh" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">描述信息(ZH)</label>
+                                            <div class="col-sm-10">
+                                              <input type="text" class="form-control" name="description_zh">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -315,6 +341,18 @@
         //详情
         return (
             '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+            '<tr>' +
+            '<td>关系引用</td>' +
+            '<td>' +
+            d['relationship citations'] +
+            '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td>信息链接</td>' +
+            '<td>' +
+            d.url +
+            '</td>' +
+            '</tr>' +
             {#'<tr>' +#}
             {#'<td>Full name:</td>' +#}
             {#'<td>' +#}
@@ -369,18 +407,23 @@
         "bProcessing": true, //显示数据加载中\
         "createdRow": function( row, data, dataIndex ) {
            if(data.description.length > remarkShowLength){//只有超长，才有td点击事件
-              $(row).children('td').eq(2).attr('ondblclick','javascript:changeShowRemarks(this);');
+              $(row).children('td').eq(3).attr('ondblclick','javascript:changeShowRemarks(this);');
+           }
+           if(data.description_zh.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(4).attr('ondblclick','javascript:changeShowRemarks(this);');
            }
            if(data.description.length > remarkShowLength) {
-               $(row).children('td').eq(6).attr('ondblclick', 'javascript:changeShowRemarks(this);');
+               $(row).children('td').eq(9).attr('ondblclick', 'javascript:changeShowRemarks(this);');
            }
-           $(row).children('td').eq(2).attr('content',data.description);
-           $(row).children('td').eq(6).attr('content',data['relationship citations']);
+           $(row).children('td').eq(3).attr('content',data.description);
+           $(row).children('td').eq(4).attr('content',data.description_zh);
+           $(row).children('td').eq(9).attr('content',data['relationship citations']);
          },
         ajax: '/attack/mitigations/data/',
         columns: [
             { data: 'ID' },
             { data: 'name' },
+            { data: 'name_zh' },
             { data: 'description' ,
                 "render": function (data, type, full, meta) {
                     if (full.description.length > remarkShowLength) {
@@ -390,19 +433,28 @@
                         }
                     }
             },
-            { data: 'created' },
-            { data: 'last modified' },
-            { data: 'version' },
-            { data: 'relationship citations' ,
+            { data: 'description_zh' ,
                 "render": function (data, type, full, meta) {
-                    if (full['relationship citations'].length > remarkShowLength) {
-                     return getPartialRemarksHtml(full['relationship citations']);//显示部分信息
+                    if (full.description_zh.length > remarkShowLength) {
+                     return getPartialRemarksHtml(full.description_zh);//显示部分信息
                     } else {
-                        return full['relationship citations'];//显示原始全部信息
+                        return full.description_zh;//显示原始全部信息
                         }
                     }
             },
-            { data: 'url' },
+            { data: 'created' },
+            { data: 'last modified' },
+            { data: 'version' },
+            // { data: 'relationship citations' ,
+            //     "render": function (data, type, full, meta) {
+            //         if (full['relationship citations'].length > remarkShowLength) {
+            //          return getPartialRemarksHtml(full['relationship citations']);//显示部分信息
+            //         } else {
+            //             return full['relationship citations'];//显示原始全部信息
+            //             }
+            //         }
+            // },
+            // { data: 'url' },
             {
                 "className": 'dt-control',
                 "orderable": false,

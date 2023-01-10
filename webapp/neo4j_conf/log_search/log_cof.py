@@ -38,7 +38,7 @@ def show_node(iDisplayStart, iDisplayLength):
     #               'DatasourceComponent', 'Software', 'Groups', 'Mitigations', 'Rule', 'NET_ASSERT', 'Campaign']
 
     info = NodeMatcher(graph).match().where(f"NONE(l in LABELS(_) WHERE l IN {LABEL_LIST})")\
-        .order_by('_.event__start DESC').skip(iDisplayStart).limit(iDisplayLength).all()
+        .order_by('_.event__start ASC').skip(iDisplayStart).limit(iDisplayLength).all()
     total_count = NodeMatcher(graph).match().where(f"NONE(l in LABELS(_) WHERE l IN {LABEL_LIST})").count()
     for text in info:
         info_list.append(dict(text))
